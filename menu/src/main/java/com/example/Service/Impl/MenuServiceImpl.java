@@ -7,7 +7,7 @@ import com.example.Mapper.MenuMapper;
 import com.example.Repository.MenuRepository;
 import com.example.Service.MenuService;
 import com.example.Utils.MenuUtils;
-import com.example.resource.ResourceNotFoundException;
+import com.example.Exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,36 +30,29 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuResponseDto getMenuDetailsById(Long menuId) {
-        MenuEntity menu = menuRepository.findById(menuId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Menu does not exists with the given id " + menuId));
-        return MenuMapper.mapToMenuDto(menu);
+        MenuEntity menuEntity = MenuUtils.checkIfMenuExists(menuRepository, menuId);
+        return MenuMapper.mapToMenuDto(menuEntity);
     }
 
     @Override
     public MenuResponseDto createMenu(MenuRequestDto menuRequestDto) {
         MenuEntity menuEntity = MenuMapper.mapToMenuEntity(menuRequestDto);
-        menuEntity = menuRepository.save(menuEntity);
-        return MenuMapper.mapToMenuDto(menuEntity);
+        MenuUtils.validateDetails(menuEntity);
+        MenuEntity savedMenuEntity = menuRepository.save(menuEntity);
+        return MenuMapper.mapToMenuDto(savedMenuEntity);
     }
 
     @Override
     public void deleteMenu(Long menuId) {
-        menuRepository.findById(menuId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Menu does not exists with the given id " + menuId));
-
+        MenuUtils.checkIfMenuExists(menuRepository, menuId);
         menuRepository.deleteById(menuId);
     }
 
     @Override
     public MenuResponseDto updateMenu(Long menuId, MenuRequestDto updateMenuRequestDto) {
-        MenuEntity oldMenuEntity = menuRepository.findById(menuId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Menu does not exists with the given id " + menuId));
-
+        MenuEntity oldMenuEntity = MenuUtils.checkIfMenuExists(menuRepository, menuId);
         MenuEntity newMenuEntity = MenuMapper.mapToMenuEntity(updateMenuRequestDto);
-
+        MenuUtils.validateDetails(newMenuEntity);
         MenuEntity updatedMenuDetails = MenuUtils.updateMenuDetails(oldMenuEntity, newMenuEntity);
         menuRepository.save(updatedMenuDetails);
         return MenuMapper.mapToMenuDto(updatedMenuDetails);
