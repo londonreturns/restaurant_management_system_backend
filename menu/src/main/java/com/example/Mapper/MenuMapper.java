@@ -8,9 +8,9 @@ public class MenuMapper {
     public static MenuResponseDto mapToMenuDto(MenuEntity menuEntity) {
         return new MenuResponseDto(
                 menuEntity.getMenuId(),
-                menuEntity.getName(),
-                menuEntity.getDescription(),
-                menuEntity.getAvailability()
+                menuEntity.getMenuName(),
+                menuEntity.getMenuDescription(),
+                menuEntity.getMenuAvailability()
         );
     }
 

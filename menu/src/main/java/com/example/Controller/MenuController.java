@@ -34,7 +34,7 @@ public class MenuController {
         return new ResponseEntity<>(menuResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/updateMenu/{id}")
+    @PutMapping("/updateMenu/{id}")
     public ResponseEntity<MenuResponseDto> updateMenu(@PathVariable Long id, @RequestBody MenuRequestDto menuRequestDto) {
         MenuResponseDto menuResponseDto = menuService.updateMenu(id, menuRequestDto);
         return new ResponseEntity<>(menuResponseDto, HttpStatus.OK);

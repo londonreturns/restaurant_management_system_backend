@@ -10,9 +10,9 @@ public class MenuUtils {
 
     public static MenuEntity updateMenuDetails(MenuEntity oldMenuEntity, MenuEntity newMenuEntity) {
         oldMenuEntity.setMenuId(oldMenuEntity.getMenuId());
-        oldMenuEntity.setName(newMenuEntity.getName());
-        oldMenuEntity.setDescription(newMenuEntity.getDescription());
-        oldMenuEntity.setAvailability(newMenuEntity.getAvailability());
+        oldMenuEntity.setMenuName(newMenuEntity.getMenuName());
+        oldMenuEntity.setMenuDescription(newMenuEntity.getMenuDescription());
+        oldMenuEntity.setMenuAvailability(newMenuEntity.getMenuAvailability());
         return oldMenuEntity;
     }
 
@@ -27,15 +27,15 @@ public class MenuUtils {
             throw new ValidationException("MenuEntity cannot be null");
         }
 
-        if (menuEntity.getName() == null || menuEntity.getName().trim().isEmpty()) {
+        if (menuEntity.getMenuName() == null || menuEntity.getMenuName().trim().isEmpty()) {
             throw new ValidationException("Menu name is required and cannot be empty");
         }
 
-        if (menuEntity.getDescription() != null && menuEntity.getDescription().length() > 255) {
+        if (menuEntity.getMenuDescription() != null && menuEntity.getMenuDescription().length() > 255) {
             throw new ValidationException("Description should not exceed 255 characters");
         }
 
-        if (menuEntity.getAvailability() != null && menuEntity.getAvailability().length() > 255) {
+        if (menuEntity.getMenuAvailability() != null && menuEntity.getMenuAvailability().length() > 255) {
             throw new ValidationException("Invalid availability status. Allowed values are 'available' or 'unavailable'");
         }
     }
