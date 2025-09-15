@@ -1,5 +1,6 @@
 package com.example.Controller;
 
+import com.example.Dto.CategoryDTO;
 import com.example.Dto.MenuDTO;
 import com.example.Dto.SizeGroupDTO;
 import com.example.Service.FoodService;
@@ -39,5 +40,10 @@ public class FoodController {
     @GetMapping("/getAllMenus")
     public ResponseEntity<List<MenuDTO>> getAllMenus() {
         return new ResponseEntity<>(foodService.getAllMenu(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllCategoriesAndMenus")
+    public ResponseEntity<List<CategoryDTO>> getAllCategoriesAndMenus() {
+        return new ResponseEntity<>(foodService.getAllCategory(), HttpStatus.OK);
     }
 }

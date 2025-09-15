@@ -1,5 +1,6 @@
 package com.example.Service;
 
+import com.example.Dto.CategoryDTO;
 import com.example.Dto.MenuDTO;
 import com.example.Dto.SizeGroupDTO;
 
@@ -15,4 +16,6 @@ public interface FoodService {
     MenuDTO updateMenuAndSize(MenuDTO menuDTO);
 
     List<MenuDTO> getAllMenu();
+
+    List<CategoryDTO> getAllCategory();
 }

@@ -1,9 +1,6 @@
 package com.example.Service.Impl;
 
-import com.example.Dto.MenuDTO;
-import com.example.Dto.MenuSizeDTO;
-import com.example.Dto.SizeDTO;
-import com.example.Dto.SizeGroupDTO;
+import com.example.Dto.*;
 import com.example.Exception.ResourceNotFoundException;
 import com.example.Model.*;
 import com.example.Repository.*;
@@ -159,13 +156,7 @@ public class FoodServiceImpl implements FoodService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         existingMenu.setCategory(category);
 
-//        System.out.println("---------------------------");
-//        System.out.println(category.toString());
-//        System.out.println("---------------------------");
-
         Long sizeGroupId = menuDTO.getSizeGroupId();
-        sizeGroupRepository.findById(sizeGroupId)
-                .orElseThrow(() -> new ResourceNotFoundException("SizeGroup not found"));
 
         List<MenuSizeDB> updatedMenuSizeDBList = new ArrayList<>();
 
@@ -216,7 +207,9 @@ public class FoodServiceImpl implements FoodService {
             menuDTO.setBasePrice(menu.getBasePrice());
             menuDTO.setCategoryId(menu.getCategory().getId());
 
-            List<MenuSizeDB> menuSizeDBList = menuSizeRepository.findByMenu(menu);
+            Long menuId = menu.getId();
+
+            List<MenuSizeDB> menuSizeDBList = menuSizeRepository.findByMenuId(menuId);
 
             List<MenuSizeDTO> menuSizeDTOs = new ArrayList<>();
             for (MenuSizeDB menuSizeDB : menuSizeDBList) {
@@ -242,5 +235,57 @@ public class FoodServiceImpl implements FoodService {
 
         return menuDTOList;
     }
+
+    @Override
+    public List<CategoryDTO> getAllCategory() {
+        List<CategoryDB> categories = categoryRepository.findAll();
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+
+        for (CategoryDB category : categories) {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setId(category.getId());
+            categoryDTO.setName(category.getName());
+
+            List<MenuDB> menus = menuRepository.findByCategoryId(category.getId());
+            List<MenuDTO> menuDTOList = new ArrayList<>();
+
+            for (MenuDB menu : menus) {
+                MenuDTO menuDTO = new MenuDTO();
+                menuDTO.setId(menu.getId());
+                menuDTO.setName(menu.getName());
+                menuDTO.setBasePrice(menu.getBasePrice());
+                menuDTO.setCategoryId(category.getId());
+
+                List<MenuSizeDB> menuSizeDBs = menuSizeRepository.findByMenuId(menu.getId());
+                List<MenuSizeDTO> menuSizeDTOList = new ArrayList<>();
+
+                for (MenuSizeDB menuSizeDB : menuSizeDBs) {
+                    MenuSizeDTO menuSizeDTO = new MenuSizeDTO();
+                    menuSizeDTO.setId(menuSizeDB.getId());
+                    menuSizeDTO.setPrice(menuSizeDB.getPrice());
+                    menuSizeDTO.setMenuId(menuSizeDB.getMenu().getId());
+                    menuSizeDTO.setSizeId(menuSizeDB.getSize().getId());
+                    menuSizeDTOList.add(menuSizeDTO);
+                }
+
+                if (!menuSizeDBs.isEmpty()) {
+                    SizeDB firstSize = menuSizeDBs.get(0).getSize();
+                    if (firstSize.getSizeGroup() != null) {
+                        menuDTO.setSizeGroupId(firstSize.getSizeGroup().getId());
+                    }
+                }
+
+                menuDTO.setMenuSizes(menuSizeDTOList);
+                menuDTOList.add(menuDTO);
+            }
+
+            categoryDTO.setMenu(menuDTOList);
+            categoryDTOList.add(categoryDTO);
+        }
+
+        return categoryDTOList;
+    }
+
+
 
 }
