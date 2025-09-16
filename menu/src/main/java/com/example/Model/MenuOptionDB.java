@@ -6,17 +6,17 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "size")
-public class SizeDB {
+@NoArgsConstructor
+@Data
+@Entity(name="menu_option")
+public class MenuOptionDB {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String option;
 
-    private Long sizeGroupId;
+    private Long menuId;
 }

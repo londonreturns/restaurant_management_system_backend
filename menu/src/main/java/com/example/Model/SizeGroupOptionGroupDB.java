@@ -16,19 +16,7 @@ public class SizeGroupOptionGroupDB {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "optiongroup_id", nullable = false, referencedColumnName = "id")
-    private OptionGroupDB optionGroup;
-
-    @Column(name = "optiongroup_id", insertable = false, updatable = false)
-    private Long optionGroupId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sizegroup_id", nullable = false, referencedColumnName = "id")
-    private SizeGroupDB sizeGroup;
-
-    @Column(name = "sizegroup_id", insertable = false, updatable = false)
     private Long sizeGroupId;
+
+    private Long optionGroupId;
 }
