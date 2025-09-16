@@ -30,6 +30,12 @@ public class FoodServiceImpl implements FoodService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private OptionRepository optionRepository;
+
+    @Autowired
+    private OptionGroupRepository optionGroupRepository;
+
     @Override
     public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
         SizeGroupDB sizeGroup = new SizeGroupDB();
@@ -286,6 +292,49 @@ public class FoodServiceImpl implements FoodService {
         return categoryDTOList;
     }
 
+    public OptionGroupDTO createOptionGroupAndOption(OptionGroupDTO optionGroupDTO) {
+        OptionGroupDB optionGroupDB = new OptionGroupDB();
+        optionGroupDB.setName(optionGroupDTO.getName());
+
+        OptionGroupDB savedOptionGroup = optionGroupRepository.save(optionGroupDB);
+
+        optionGroupDTO.setId(savedOptionGroup.getId());
+
+        for (OptionDTO optionDTO : optionGroupDTO.getOptions()) {
+            OptionDB optionDB = new OptionDB();
+            optionDB.setName(optionDTO.getName());
+            optionDB.setOptionGroup(savedOptionGroup);
+
+            OptionDB savedOption = optionRepository.save(optionDB);
+
+            optionDTO.setId(savedOption.getId());
+            optionDTO.setOptionGroupId(savedOptionGroup.getId());
+        }
+
+        return optionGroupDTO;
+    }
 
 
+    public OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO) {
+        OptionGroupDB optionGroupDB = optionGroupRepository.findById(optionGroupDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Option group with id " + optionGroupDTO.getId() + " does not exist"));
+
+        optionGroupDB.setName(optionGroupDTO.getName());
+
+        optionGroupRepository.save(optionGroupDB);
+
+        for (OptionDTO optionDTO : optionGroupDTO.getOptions()) {
+            OptionDB optionDB = optionRepository.findById(optionDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Option with id " + optionDTO.getId() + " does not exist"));
+
+            optionDB.setName(optionDTO.getName());
+            optionDB.setOptionGroup(optionGroupDB);
+
+            optionRepository.save(optionDB);
+
+            optionDTO.setId(optionDB.getId());
+        }
+
+        return optionGroupDTO;
+    }
 }

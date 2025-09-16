@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class SizeDTO {
+@Data
+public class OptionGroupDTO {
 
     private Long id;
 
     private String name;
 
-    private Long sizeGroupId;
+    private List<OptionDTO> options;
 }

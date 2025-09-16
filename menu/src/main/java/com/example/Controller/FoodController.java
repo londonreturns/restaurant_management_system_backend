@@ -2,6 +2,7 @@ package com.example.Controller;
 
 import com.example.Dto.CategoryDTO;
 import com.example.Dto.MenuDTO;
+import com.example.Dto.OptionGroupDTO;
 import com.example.Dto.SizeGroupDTO;
 import com.example.Service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,15 @@ public class FoodController {
     @GetMapping("/getAllCategoriesAndMenus")
     public ResponseEntity<List<CategoryDTO>> getAllCategoriesAndMenus() {
         return new ResponseEntity<>(foodService.getAllCategory(), HttpStatus.OK);
+    }
+
+    @PostMapping("/createOptionGroupAndOption")
+    public ResponseEntity<OptionGroupDTO> createOptionSizeAndOption(@RequestBody OptionGroupDTO optionGroupDTO) {
+        return new ResponseEntity<>(foodService.createOptionGroupAndOption(optionGroupDTO), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateOptionGroupAndOption")
+    public ResponseEntity<OptionGroupDTO> updateOptionSizeAndOption(@RequestBody OptionGroupDTO optionGroupDTO) {
+        return new ResponseEntity<>(foodService.updateOptionGroupAndOption(optionGroupDTO), HttpStatus.OK);
     }
 }

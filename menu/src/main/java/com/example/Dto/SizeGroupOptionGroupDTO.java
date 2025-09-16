@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class SizeDTO {
+public class SizeGroupOptionGroupDTO {
 
     private Long id;
 
-    private String name;
+    private Long optionGroupId;
 
     private Long sizeGroupId;
 }

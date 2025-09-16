@@ -2,6 +2,7 @@ package com.example.Service;
 
 import com.example.Dto.CategoryDTO;
 import com.example.Dto.MenuDTO;
+import com.example.Dto.OptionGroupDTO;
 import com.example.Dto.SizeGroupDTO;
 
 import java.util.List;
@@ -18,4 +19,8 @@ public interface FoodService {
     List<MenuDTO> getAllMenu();
 
     List<CategoryDTO> getAllCategory();
+
+    OptionGroupDTO createOptionGroupAndOption(OptionGroupDTO optionGroupDTO);
+
+    OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO);
 }
