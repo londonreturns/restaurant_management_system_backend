@@ -36,6 +36,9 @@ public class FoodServiceImpl implements FoodService {
     @Autowired
     private OptionGroupRepository optionGroupRepository;
 
+    @Autowired
+    private SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository;
+
     @Override
     public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
         SizeGroupDB sizeGroup = new SizeGroupDB();
@@ -48,14 +51,11 @@ public class FoodServiceImpl implements FoodService {
             SizeDB size = new SizeDB();
             size.setName(sizeDTO.getName());
 
-            size.setSizeGroup(sizeGroup);
-
             sizeRepository.save(size);
 
             SizeDTO updatedSizeDTO = new SizeDTO();
             updatedSizeDTO.setId(size.getId());
             updatedSizeDTO.setName(size.getName());
-            updatedSizeDTO.setSizeGroupId(size.getSizeGroup().getId());
 
             updatedSizes.add(updatedSizeDTO);
         }
@@ -69,6 +69,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
         Long sizeGroupId = sizeGroupDTO.getId();
+
         SizeGroupDB sizeGroupDB = sizeGroupRepository.findById(sizeGroupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Size group with id " + sizeGroupId + " does not exist"));
 
@@ -81,7 +82,8 @@ public class FoodServiceImpl implements FoodService {
                     .orElseThrow(() -> new ResourceNotFoundException("Size with id " + sizeDTO.getId() + " does not exist"));
 
             existingSize.setName(sizeDTO.getName());
-            existingSize.setSizeGroup(sizeGroupDB);
+
+            existingSize.setSizeGroupId(sizeGroupId);
 
             updatedSizes.add(existingSize);
         }
@@ -96,7 +98,7 @@ public class FoodServiceImpl implements FoodService {
         updatedSizeGroupDTO.setName(sizeGroupDTO.getName());
 
         updatedSizeGroupDTO.setSizes(updatedSizes.stream()
-                .map(size -> new SizeDTO(size.getId(), size.getName(), size.getSizeGroup().getId()))
+                .map(size -> new SizeDTO(size.getId(), size.getName(), size.getSizeGroupId()))
                 .collect(Collectors.toList()));
 
         return updatedSizeGroupDTO;
@@ -202,47 +204,6 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    public List<MenuDTO> getAllMenu() {
-        List<MenuDB> menus = menuRepository.findAll();
-        List<MenuDTO> menuDTOList = new ArrayList<>();
-
-        for (MenuDB menu : menus) {
-            MenuDTO menuDTO = new MenuDTO();
-            menuDTO.setId(menu.getId());
-            menuDTO.setName(menu.getName());
-            menuDTO.setBasePrice(menu.getBasePrice());
-            menuDTO.setCategoryId(menu.getCategory().getId());
-
-            Long menuId = menu.getId();
-
-            List<MenuSizeDB> menuSizeDBList = menuSizeRepository.findByMenuId(menuId);
-
-            List<MenuSizeDTO> menuSizeDTOs = new ArrayList<>();
-            for (MenuSizeDB menuSizeDB : menuSizeDBList) {
-                MenuSizeDTO menuSizeDTO = new MenuSizeDTO();
-                menuSizeDTO.setId(menuSizeDB.getId());
-                menuSizeDTO.setPrice(menuSizeDB.getPrice());
-                menuSizeDTO.setMenuId(menuSizeDB.getMenu().getId());
-                menuSizeDTO.setSizeId(menuSizeDB.getSize().getId());
-                menuSizeDTOs.add(menuSizeDTO);
-            }
-
-            menuDTO.setMenuSizes(menuSizeDTOs);
-
-            if (!menuSizeDBList.isEmpty()) {
-                SizeDB firstSize = menuSizeDBList.get(0).getSize();
-                if (firstSize.getSizeGroup() != null) {
-                    menuDTO.setSizeGroupId(firstSize.getSizeGroup().getId());
-                }
-            }
-
-            menuDTOList.add(menuDTO);
-        }
-
-        return menuDTOList;
-    }
-
-    @Override
     public List<CategoryDTO> getAllCategory() {
         List<CategoryDB> categories = categoryRepository.findAll();
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
@@ -276,8 +237,8 @@ public class FoodServiceImpl implements FoodService {
 
                 if (!menuSizeDBs.isEmpty()) {
                     SizeDB firstSize = menuSizeDBs.get(0).getSize();
-                    if (firstSize.getSizeGroup() != null) {
-                        menuDTO.setSizeGroupId(firstSize.getSizeGroup().getId());
+                    if (firstSize != null && firstSize.getSizeGroupId() != null) {
+                        menuDTO.setSizeGroupId(firstSize.getSizeGroupId());
                     }
                 }
 
@@ -291,6 +252,7 @@ public class FoodServiceImpl implements FoodService {
 
         return categoryDTOList;
     }
+
 
     public OptionGroupDTO createOptionGroupAndOption(OptionGroupDTO optionGroupDTO) {
         OptionGroupDB optionGroupDB = new OptionGroupDB();
@@ -336,5 +298,17 @@ public class FoodServiceImpl implements FoodService {
         }
 
         return optionGroupDTO;
+    }
+
+    @Override
+    public SizeGroupOptionGroupDTO linkSizeGroupAndOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
+        SizeGroupOptionGroupDB sizeGroupOptionGroupDB = new SizeGroupOptionGroupDB();
+        sizeGroupOptionGroupDB.setSizeGroupId(sizeGroupOptionGroupDTO.getSizeGroupId());
+        sizeGroupOptionGroupDB.setOptionGroupId(sizeGroupOptionGroupDTO.getOptionGroupId());
+
+        sizeGroupOptionGroupRepository.save(sizeGroupOptionGroupDB);
+
+        sizeGroupOptionGroupDTO.setId(sizeGroupOptionGroupDB.getId());
+        return sizeGroupOptionGroupDTO;
     }
 }

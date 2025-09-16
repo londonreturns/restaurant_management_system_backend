@@ -1,9 +1,6 @@
 package com.example.Controller;
 
-import com.example.Dto.CategoryDTO;
-import com.example.Dto.MenuDTO;
-import com.example.Dto.OptionGroupDTO;
-import com.example.Dto.SizeGroupDTO;
+import com.example.Dto.*;
 import com.example.Service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,11 +35,6 @@ public class FoodController {
         return new ResponseEntity<>(foodService.updateMenuAndSize(menuDTO), HttpStatus.OK);
     }
 
-    @GetMapping("/getAllMenus")
-    public ResponseEntity<List<MenuDTO>> getAllMenus() {
-        return new ResponseEntity<>(foodService.getAllMenu(), HttpStatus.OK);
-    }
-
     @GetMapping("/getAllCategoriesAndMenus")
     public ResponseEntity<List<CategoryDTO>> getAllCategoriesAndMenus() {
         return new ResponseEntity<>(foodService.getAllCategory(), HttpStatus.OK);
@@ -56,5 +48,10 @@ public class FoodController {
     @PutMapping("/updateOptionGroupAndOption")
     public ResponseEntity<OptionGroupDTO> updateOptionSizeAndOption(@RequestBody OptionGroupDTO optionGroupDTO) {
         return new ResponseEntity<>(foodService.updateOptionGroupAndOption(optionGroupDTO), HttpStatus.OK);
+    }
+
+    @PutMapping("/linkSizeGroupOptionGroup")
+    public ResponseEntity<SizeGroupOptionGroupDTO> linkSizeGroupOptionGroup(@RequestBody SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
+        return new ResponseEntity<>(foodService.linkSizeGroupAndOptionGroup(sizeGroupOptionGroupDTO), HttpStatus.OK);
     }
 }
