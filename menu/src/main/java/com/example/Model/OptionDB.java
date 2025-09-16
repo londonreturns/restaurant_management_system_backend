@@ -19,9 +19,9 @@ public class OptionDB {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "optiongroup_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "option_group_id", nullable = false, referencedColumnName = "id")
     private OptionGroupDB optionGroup;
 
-    @Column(name = "optiongroup_id", insertable = false, updatable = false)
+    @Column(name = "option_group_id", insertable = false, updatable = false)
     private Long optionGroupId;
 }

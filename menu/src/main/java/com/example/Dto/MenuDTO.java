@@ -22,4 +22,6 @@ public class MenuDTO {
     private Long sizeGroupId;
 
     List<MenuSizeDTO> menuSizes;
+
+    List<OptionDTO> options;
 }

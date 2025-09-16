@@ -23,12 +23,10 @@ public class SizeServiceImpl implements SizeService {
 
     @Override
     public SizeDTO createSize(SizeDTO dto) {
-        SizeGroupDB sizeGroup = sizeGroupRepository.findById(dto.getSizeGroupId())
+        sizeGroupRepository.findById(dto.getSizeGroupId())
                 .orElseThrow(() -> new RuntimeException("SizeGroup not found with id: " + dto.getSizeGroupId()));
 
         SizeDB sizeDB = convertToEntity(dto);
-
-        sizeDB.setSizeGroup(sizeGroup);
 
         return convertToDto(sizeRepository.save(sizeDB));
     }
@@ -87,7 +85,7 @@ public class SizeServiceImpl implements SizeService {
         SizeDTO dto = new SizeDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setSizeGroupId(entity.getSizeGroup().getId());
+        dto.setSizeGroupId(entity.getSizeGroupId());
         return dto;
     }
 }

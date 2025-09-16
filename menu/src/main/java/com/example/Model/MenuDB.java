@@ -26,6 +26,4 @@ public class MenuDB {
 
     @Column(name = "category_id", insertable = false, updatable = false)
     private Long categoryId;
-
-
 }

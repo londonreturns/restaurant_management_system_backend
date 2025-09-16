@@ -43,19 +43,21 @@ public class FoodServiceImpl implements FoodService {
     public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
         SizeGroupDB sizeGroup = new SizeGroupDB();
         sizeGroup.setName(sizeGroupDTO.getName());
-        sizeGroupRepository.save(sizeGroup);
+        SizeGroupDB sizeGroupDB = sizeGroupRepository.save(sizeGroup);
 
         List<SizeDTO> updatedSizes = new ArrayList<>();
 
         for (SizeDTO sizeDTO : sizeGroupDTO.getSizes()) {
             SizeDB size = new SizeDB();
             size.setName(sizeDTO.getName());
+            size.setSizeGroup(sizeGroup);
 
             sizeRepository.save(size);
 
             SizeDTO updatedSizeDTO = new SizeDTO();
             updatedSizeDTO.setId(size.getId());
             updatedSizeDTO.setName(size.getName());
+            updatedSizeDTO.setSizeGroupId(sizeGroupDB.getId());
 
             updatedSizes.add(updatedSizeDTO);
         }
@@ -65,6 +67,7 @@ public class FoodServiceImpl implements FoodService {
 
         return sizeGroupDTO;
     }
+
 
     @Override
     public SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
@@ -302,13 +305,24 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public SizeGroupOptionGroupDTO linkSizeGroupAndOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
+        Long sizeGroupId = sizeGroupOptionGroupDTO.getSizeGroupId();
+        Long optionGroupId = sizeGroupOptionGroupDTO.getOptionGroupId();
+
+        OptionGroupDB optionGroupDB = optionGroupRepository.findById(optionGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("Option group with id " + optionGroupId + " does not exist"));
+
+        SizeGroupDB sizeGroupDB = sizeGroupRepository.findById(sizeGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("Size group with id " + sizeGroupId + " does not exist"));
+
         SizeGroupOptionGroupDB sizeGroupOptionGroupDB = new SizeGroupOptionGroupDB();
-        sizeGroupOptionGroupDB.setSizeGroupId(sizeGroupOptionGroupDTO.getSizeGroupId());
-        sizeGroupOptionGroupDB.setOptionGroupId(sizeGroupOptionGroupDTO.getOptionGroupId());
+        sizeGroupOptionGroupDB.setSizeGroup(sizeGroupDB);
+        sizeGroupOptionGroupDB.setOptionGroup(optionGroupDB);
+        sizeGroupOptionGroupDB.setSizeGroupId(sizeGroupId);
+        sizeGroupOptionGroupDB.setOptionGroupId(optionGroupId);
 
-        sizeGroupOptionGroupRepository.save(sizeGroupOptionGroupDB);
+        SizeGroupOptionGroupDB savedSizeGroupOptionGroupDB = sizeGroupOptionGroupRepository.save(sizeGroupOptionGroupDB);
+        sizeGroupOptionGroupDTO.setId(savedSizeGroupOptionGroupDB.getId());
 
-        sizeGroupOptionGroupDTO.setId(sizeGroupOptionGroupDB.getId());
         return sizeGroupOptionGroupDTO;
     }
 }

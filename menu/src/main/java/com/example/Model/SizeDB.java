@@ -18,5 +18,10 @@ public class SizeDB {
 
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "size_group_id", nullable = false, referencedColumnName = "id")
+    private SizeGroupDB sizeGroup;
+
+    @Column(name = "size_group_id", insertable = false, updatable = false)
     private Long sizeGroupId;
 }

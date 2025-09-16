@@ -25,10 +25,10 @@ public class MenuSizeDB {
     @Column(name = "menu_id", insertable = false, updatable = false)
     private Long menuId;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="size_id",nullable = false,referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "size_id", nullable = false, referencedColumnName = "id")
     private SizeDB size;
 
-    @Column(name="size_id",insertable = false,updatable = false)
+    @Column(name = "size_id", insertable = false, updatable = false)
     private Long sizeId;
 }

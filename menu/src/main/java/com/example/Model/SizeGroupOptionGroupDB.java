@@ -16,7 +16,17 @@ public class SizeGroupOptionGroupDB {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long sizeGroupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "option_group_id", nullable = false, referencedColumnName = "id")
+    private OptionGroupDB optionGroup;
 
+    @Column(name = "option_group_id", insertable = false, updatable = false)
     private Long optionGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "size_group_id", nullable = false, referencedColumnName = "id")
+    private SizeGroupDB sizeGroup;
+
+    @Column(name = "size_group_id", insertable = false, updatable = false)
+    private Long sizeGroupId;
 }
