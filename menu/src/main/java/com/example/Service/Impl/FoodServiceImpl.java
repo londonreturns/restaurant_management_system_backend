@@ -129,7 +129,7 @@ public class FoodServiceImpl implements FoodService {
 
         Long sizeGroupId = menuDTO.getSizeGroupId();
 
-        SizeGroupDB sizeGroup = sizeGroupRepository.findById(sizeGroupId)
+        sizeGroupRepository.findById(sizeGroupId)
                 .orElseThrow(() -> new ResourceNotFoundException("SizeGroup not found"));
 
         List<MenuSizeDB> menuSizeDBList = new ArrayList<>();

@@ -19,7 +19,4 @@ public class SizeGroupDB {
     private Long id;
 
     private String name;
-
-    @OneToMany(mappedBy = "sizeGroup", cascade = CascadeType.ALL)
-    private List<SizeDB> sizes = new ArrayList<>();
 }

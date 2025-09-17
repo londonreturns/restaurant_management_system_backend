@@ -18,5 +18,8 @@ public class SizeDTO {
     private Long sizeGroupId;
 
     public SizeDTO(Long id, String name, Long sizeGroupId) {
+        this.id = id;
+        this.name = name;
+        this.sizeGroupId = sizeGroupId;
     }
 }
