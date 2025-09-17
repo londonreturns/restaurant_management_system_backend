@@ -121,6 +121,9 @@ public class FoodServiceImpl implements FoodService {
         CategoryDB category = categoryRepository.findById(menuDTO.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         menu.setCategory(category);
+        menu.setSizeGroup(sizeGroupRepository.findById(menuDTO.getSizeGroupId())
+        .orElseThrow(() -> new ResourceNotFoundException("Size group not found")));
+        menu.setSizeGroupId(menuDTO.getSizeGroupId());
 
         menuRepository.save(menu);
 
@@ -132,7 +135,7 @@ public class FoodServiceImpl implements FoodService {
         List<MenuSizeDB> menuSizeDBList = new ArrayList<>();
         for (SizeDB size : sizeGroup.getSizes()) {
             MenuSizeDB menuSizeDB = new MenuSizeDB();
-            menuSizeDB.setPrice(menuDTO.getBasePrice());
+            menuSizeDB.setPrice(0);
             menuSizeDB.setMenu(menu);
             menuSizeDB.setSize(size);
 
@@ -417,9 +420,6 @@ public class FoodServiceImpl implements FoodService {
 
         List<MenuOptionDB> chosenMenuOptions = menuOptionRepository.findAllByMenuId(menuId);
 
-        MenuDTO menuDTO = new MenuDTO();
-        menuDTO.setId(menuId);
-
         List<OptionDTO> optionDTOs = new ArrayList<>();
 
         for (OptionDB availableOption : availableOptionDBS) {
@@ -439,7 +439,11 @@ public class FoodServiceImpl implements FoodService {
             optionDTOs.add(optionDTO);
         }
 
+        MenuDTO menuDTO = new MenuDTO();
+
+        menuDTO.setId(menuId);
         menuDTO.setOptions(optionDTOs);
+        menuDTO.setBasePrice(menuDB.getBasePrice());
         return menuDTO;
     }
 }
