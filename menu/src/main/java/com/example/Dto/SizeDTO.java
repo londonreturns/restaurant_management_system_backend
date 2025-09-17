@@ -13,5 +13,10 @@ public class SizeDTO {
 
     private String name;
 
+    private float price;
+
     private Long sizeGroupId;
+
+    public SizeDTO(Long id, String name, Long sizeGroupId) {
+    }
 }

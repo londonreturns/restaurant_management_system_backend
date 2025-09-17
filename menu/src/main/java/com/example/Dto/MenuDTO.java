@@ -28,4 +28,10 @@ public class MenuDTO {
     List<OptionDTO> options;
 
     List<OptionDTO> removedOptions;
+
+    List<SizeDTO> sizes;
+
+    List<OptionDTO> menuOptions;
+
+    List<OptionGroupDTO> optionGroups;
 }

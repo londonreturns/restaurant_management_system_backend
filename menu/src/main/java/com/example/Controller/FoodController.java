@@ -69,4 +69,9 @@ public class FoodController {
     public ResponseEntity<MenuDTO> getMenuOptionsDetailed(@PathVariable Long id) {
         return new ResponseEntity<>(foodService.getMenuOptionsDetailed(id), HttpStatus.OK);
     }
+
+    @PutMapping("/handleMenuOptionsDetailed")
+    public ResponseEntity<MenuDTO> handleMenuOptionsDetailed(@RequestBody MenuDTO menuDTO) {
+        return new ResponseEntity<>(foodService.handleMenuOptionsDetailed(menuDTO), HttpStatus.OK);
+    }
 }

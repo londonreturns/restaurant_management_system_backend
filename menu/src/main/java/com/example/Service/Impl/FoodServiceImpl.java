@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,7 +98,6 @@ public class FoodServiceImpl implements FoodService {
 
         sizeRepository.saveAll(updatedSizes);
 
-        sizeGroupDB.setSizes(updatedSizes);
         sizeGroupRepository.save(sizeGroupDB);
 
         SizeGroupDTO updatedSizeGroupDTO = new SizeGroupDTO();
@@ -133,7 +133,10 @@ public class FoodServiceImpl implements FoodService {
                 .orElseThrow(() -> new ResourceNotFoundException("SizeGroup not found"));
 
         List<MenuSizeDB> menuSizeDBList = new ArrayList<>();
-        for (SizeDB size : sizeGroup.getSizes()) {
+
+        List<SizeDB> sizeDBS = sizeRepository.findBySizeGroupId(sizeGroupId);
+
+        for (SizeDB size : sizeDBS) {
             MenuSizeDB menuSizeDB = new MenuSizeDB();
             menuSizeDB.setPrice(0);
             menuSizeDB.setMenu(menu);
@@ -444,6 +447,44 @@ public class FoodServiceImpl implements FoodService {
         menuDTO.setId(menuId);
         menuDTO.setOptions(optionDTOs);
         menuDTO.setBasePrice(menuDB.getBasePrice());
+        return menuDTO;
+    }
+
+    @Transactional
+    @Override
+    public MenuDTO handleMenuOptionsDetailed(MenuDTO menuDTO) {
+        Long menuId = menuDTO.getId();
+
+        MenuDB menuDB = menuRepository.findById(menuId)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu with id " + menuId + " not found"));
+
+        List<OptionDTO> userSubmittedOptionDTOs = menuDTO.getOptions();
+
+        Map<Long, MenuOptionDB> savedOptionMap = menuOptionRepository.findAllByMenuId(menuId)
+                .stream()
+                .collect(Collectors.toMap(MenuOptionDB::getOptionId, menuOption -> menuOption));
+
+        for (OptionDTO userSubmittedOptionDTO : userSubmittedOptionDTOs) {
+
+            MenuOptionDB savedOption = savedOptionMap.get(userSubmittedOptionDTO.getId());
+
+            if (savedOption != null) {
+                if (!userSubmittedOptionDTO.isSelected()) {
+                    menuOptionRepository.delete(savedOption);
+                }
+            } else {
+                if (userSubmittedOptionDTO.isSelected()) {
+                    MenuOptionDB newOption = new MenuOptionDB();
+                    newOption.setOptionId(userSubmittedOptionDTO.getId());
+                    newOption.setMenuId(menuId);
+                    newOption.setMenu(menuDB);
+                    newOption.setOption(optionRepository.findById(userSubmittedOptionDTO.getId()).orElseThrow(
+                            () -> new ResourceNotFoundException("Option with id " + userSubmittedOptionDTO.getId() + " not found")
+                    ));
+                    menuOptionRepository.save(newOption);
+                }
+            }
+        }
         return menuDTO;
     }
 }
