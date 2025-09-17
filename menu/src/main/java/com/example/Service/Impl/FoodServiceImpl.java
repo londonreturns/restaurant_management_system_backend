@@ -7,6 +7,7 @@ import com.example.Repository.*;
 import com.example.Service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class FoodServiceImpl implements FoodService {
 
     @Autowired
     private SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository;
+
+    @Autowired
+    private MenuOptionRepository menuOptionRepository;
 
     @Override
     public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
@@ -324,5 +328,130 @@ public class FoodServiceImpl implements FoodService {
         sizeGroupOptionGroupDTO.setId(savedSizeGroupOptionGroupDB.getId());
 
         return sizeGroupOptionGroupDTO;
+    }
+
+    @Transactional
+    @Override
+    public MenuDTO handleMenuOptions(MenuDTO menuDTO) {
+        MenuDB menuDB = menuRepository.findById(menuDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
+
+        for (OptionDTO optionDTO : menuDTO.getOptions()) {
+            OptionDB optionDB = optionRepository.findById(optionDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Option with id " + optionDTO.getId() + " does not exist"));
+
+            if (menuOptionRepository.findAllByMenuIdAndOptionId(menuDTO.getId(), optionDTO.getId()) == null) {
+                MenuOptionDB menuOptionDB = new MenuOptionDB();
+                menuOptionDB.setMenu(menuDB);
+                menuOptionDB.setMenuId(menuDTO.getId());
+                menuOptionDB.setOption(optionDB);
+                menuOptionDB.setOptionId(optionDB.getId());
+
+                menuOptionRepository.save(menuOptionDB);
+            }
+
+        }
+
+        for (OptionDTO optionDTO : menuDTO.getRemovedOptions()) {
+            optionRepository.findById(optionDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Option with id " + optionDTO.getId() + " does not exist"));
+
+            menuOptionRepository.deleteByMenuIdAndOptionId(menuDTO.getId(), optionDTO.getId());
+        }
+
+        return menuDTO;
+    }
+
+
+    @Override
+    public List<MenuDTO> getMenuOptions() {
+        List<MenuDB> menuDBs = menuRepository.findAll();
+
+        List<MenuDTO> menuDTOs = new ArrayList<>();
+
+        for (MenuDB menuDB : menuDBs) {
+            MenuDTO menuDTO = new MenuDTO();
+
+            menuDTO.setId(menuDB.getId());
+            menuDTO.setName(menuDB.getName());
+            menuDTO.setBasePrice(menuDB.getBasePrice());
+            menuDTO.setCategoryId(menuDB.getCategoryId());
+
+            List<MenuOptionDB> menuOptionDBs = menuOptionRepository.findByMenuId(menuDB.getId());
+
+            List<OptionDTO> optionDTOs = new ArrayList<>();
+            for (MenuOptionDB menuOptionDB : menuOptionDBs) {
+                OptionDTO optionDTO = new OptionDTO();
+
+                optionDTO.setId(menuOptionDB.getOption().getId());
+                optionDTO.setName(menuOptionDB.getOption().getName());
+                optionDTO.setOptionGroupId(menuOptionDB.getOption().getOptionGroupId());
+
+                optionDTOs.add(optionDTO);
+            }
+
+            menuDTO.setOptions(optionDTOs);
+            menuDTOs.add(menuDTO);
+        }
+
+        return menuDTOs;
+    }
+
+    @Override
+    public MenuDTO getMenuOptionsDetailed(Long menuId) {
+        MenuDB menuDB = menuRepository.findById(menuId)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu with id " + menuId + " not found"));
+
+        List<MenuSizeDB> menuSizes = menuSizeRepository.findByMenuId(menuId);
+
+        Long sizeGroupId = sizeRepository.findById(menuSizes.get(0).getSizeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Size with id " + menuSizes.get(0).getSizeId() + " does not exist")).getSizeGroupId();
+
+        List<SizeGroupOptionGroupDB> sizeGroupOptionGroupDBS = sizeGroupOptionGroupRepository.findAllBySizeGroupId(sizeGroupId);
+
+        List<OptionDB> availableOptionDBS = new ArrayList<>();
+
+        for (SizeGroupOptionGroupDB sizeGroupOptionGroupDB : sizeGroupOptionGroupDBS) {
+            optionGroupRepository.findById(sizeGroupOptionGroupDB.getOptionGroupId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Option group with id " + sizeGroupOptionGroupDB.getOptionGroupId() + " does not exist"));
+
+            Long optionGroupId = sizeGroupOptionGroupDB.getId();
+
+            List<OptionDB> optionDBS = optionRepository.findByOptionGroupId(optionGroupId);
+
+            availableOptionDBS.addAll(optionDBS);
+
+        }
+
+        List<MenuOptionDB> chosenMenuOptions = menuOptionRepository.findAllByMenuId(menuId);
+
+        MenuDTO menuDTO = new MenuDTO();
+        menuDTO.setId(menuId);
+
+        List<OptionDTO> optionDTOs = new ArrayList<>();
+
+        for (OptionDB availableOption : availableOptionDBS) {
+            boolean isAvailable = false;
+            for (MenuOptionDB chosenMenuOption : chosenMenuOptions) {
+                if (availableOption.getId().equals(chosenMenuOption.getOption().getId())) {
+                    isAvailable = true;
+                    break;
+                }
+            }
+            OptionDTO optionDTO = new OptionDTO();
+            optionDTO.setId(availableOption.getId());
+            optionDTO.setName(availableOption.getName());
+            optionDTO.setOptionGroupId(availableOption.getOptionGroupId());
+            optionDTO.setSelected(isAvailable);
+
+            optionDTOs.add(optionDTO);
+        }
+
+        menuDTO.setOptions(optionDTOs);
+        menuDTO.setName(menuDB.getName());
+        menuDTO.setCategoryId(menuDB.getCategoryId());
+
+        menuDTO.setBasePrice(menuDB.getBasePrice());
+        return menuDTO;
     }
 }

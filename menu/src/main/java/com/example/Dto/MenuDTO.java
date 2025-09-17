@@ -24,4 +24,6 @@ public class MenuDTO {
     List<MenuSizeDTO> menuSizes;
 
     List<OptionDTO> options;
+
+    List<OptionDTO> removedOptions;
 }

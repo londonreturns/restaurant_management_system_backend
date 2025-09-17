@@ -14,4 +14,6 @@ public class OptionDTO {
     private String name;
 
     private Long optionGroupId;
+
+    private boolean isSelected;
 }

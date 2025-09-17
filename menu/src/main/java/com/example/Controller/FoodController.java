@@ -55,5 +55,18 @@ public class FoodController {
         return new ResponseEntity<>(foodService.linkSizeGroupAndOptionGroup(sizeGroupOptionGroupDTO), HttpStatus.OK);
     }
 
-//    @PostMapping("/")
+    @PostMapping("/handleMenuOptions")
+    public ResponseEntity<MenuDTO> handleMenuOptions(@RequestBody MenuDTO menuDTO) {
+        return new ResponseEntity<>(foodService.handleMenuOptions(menuDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("getMenuOptions")
+    public ResponseEntity<List<MenuDTO>> getMenuOptions() {
+        return new ResponseEntity<>(foodService.getMenuOptions(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getMenuOptionsDetailed/{id}")
+    public ResponseEntity<MenuDTO> getMenuOptionsDetailed(@PathVariable Long id) {
+        return new ResponseEntity<>(foodService.getMenuOptionsDetailed(id), HttpStatus.OK);
+    }
 }

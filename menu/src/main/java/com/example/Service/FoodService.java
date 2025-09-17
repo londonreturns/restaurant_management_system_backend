@@ -20,4 +20,10 @@ public interface FoodService {
     OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO);
 
     SizeGroupOptionGroupDTO linkSizeGroupAndOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO);
+
+    MenuDTO handleMenuOptions(MenuDTO menuDTO);
+
+    List<MenuDTO> getMenuOptions();
+
+    MenuDTO getMenuOptionsDetailed(Long menuId);
 }

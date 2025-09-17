@@ -24,9 +24,9 @@ public class MenuOptionDB {
     private Long menuId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "size_group_id", nullable = false, referencedColumnName = "id")
-    private SizeGroupDB sizeGroup;
+    @JoinColumn(name = "option_id", nullable = false, referencedColumnName = "id")
+    private OptionDB option;
 
-    @Column(name = "size_group_id", insertable = false, updatable = false)
-    private Long sizeGroupId;
+    @Column(name = "option_id", insertable = false, updatable = false)
+    private Long optionId;
 }
