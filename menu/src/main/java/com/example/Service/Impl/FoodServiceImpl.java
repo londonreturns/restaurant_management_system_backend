@@ -402,20 +402,12 @@ public class FoodServiceImpl implements FoodService {
         MenuDB menuDB = menuRepository.findById(menuId)
                 .orElseThrow(() -> new ResourceNotFoundException("Menu with id " + menuId + " not found"));
 
-        List<MenuSizeDB> menuSizes = menuSizeRepository.findByMenuId(menuId);
-
-        Long sizeGroupId = sizeRepository.findById(menuSizes.get(0).getSizeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Size with id " + menuSizes.get(0).getSizeId() + " does not exist")).getSizeGroupId();
-
-        List<SizeGroupOptionGroupDB> sizeGroupOptionGroupDBS = sizeGroupOptionGroupRepository.findAllBySizeGroupId(sizeGroupId);
+        List<SizeGroupOptionGroupDB> sizeGroupOptionGroupDBS = sizeGroupOptionGroupRepository.findAllBySizeGroupId(menuDB.getSizeGroupId());
 
         List<OptionDB> availableOptionDBS = new ArrayList<>();
 
         for (SizeGroupOptionGroupDB sizeGroupOptionGroupDB : sizeGroupOptionGroupDBS) {
-            optionGroupRepository.findById(sizeGroupOptionGroupDB.getOptionGroupId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Option group with id " + sizeGroupOptionGroupDB.getOptionGroupId() + " does not exist"));
-
-            Long optionGroupId = sizeGroupOptionGroupDB.getId();
+            Long optionGroupId = sizeGroupOptionGroupDB.getOptionGroupId();
 
             List<OptionDB> optionDBS = optionRepository.findByOptionGroupId(optionGroupId);
 
@@ -433,7 +425,7 @@ public class FoodServiceImpl implements FoodService {
         for (OptionDB availableOption : availableOptionDBS) {
             boolean isAvailable = false;
             for (MenuOptionDB chosenMenuOption : chosenMenuOptions) {
-                if (availableOption.getId().equals(chosenMenuOption.getOption().getId())) {
+                if (availableOption.getId().equals(chosenMenuOption.getOptionId())) {
                     isAvailable = true;
                     break;
                 }
@@ -448,10 +440,6 @@ public class FoodServiceImpl implements FoodService {
         }
 
         menuDTO.setOptions(optionDTOs);
-        menuDTO.setName(menuDB.getName());
-        menuDTO.setCategoryId(menuDB.getCategoryId());
-
-        menuDTO.setBasePrice(menuDB.getBasePrice());
         return menuDTO;
     }
 }
