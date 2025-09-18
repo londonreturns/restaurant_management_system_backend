@@ -5,11 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class OptionDTO {
+
+    public OptionDTO(Long id, String name) {
+        this.name = name;
+        this.id = id;
+    }
 
     private Long id;
 
@@ -21,4 +28,5 @@ public class OptionDTO {
 
     private Long optionId;
 
+    private List<SizeDTO> sizes;
 }

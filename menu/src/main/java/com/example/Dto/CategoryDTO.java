@@ -11,6 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 public class CategoryDTO {
 
+    public CategoryDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     private Long id;
 
     private String name;

@@ -9,6 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SizeDTO {
 
+    public SizeDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public SizeDTO(Long id, String name, Long sizeGroupId) {
+        this.id = id;
+        this.name = name;
+        this.sizeGroupId = sizeGroupId;
+    }
+
     private Long id;
 
     private String name;
@@ -17,9 +28,5 @@ public class SizeDTO {
 
     private Long sizeGroupId;
 
-    public SizeDTO(Long id, String name, Long sizeGroupId) {
-        this.id = id;
-        this.name = name;
-        this.sizeGroupId = sizeGroupId;
-    }
+
 }

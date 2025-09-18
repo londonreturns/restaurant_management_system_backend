@@ -1,10 +1,20 @@
 package com.example.Repository;
 
+import com.example.Dto.OptionDTO;
 import com.example.Model.OptionDB;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface OptionRepository extends JpaRepository<OptionDB, Long> {
     List<OptionDB> findByOptionGroupId(Long optionGroupId);
+
+    @Query("SELECT new com.example.Dto.OptionDTO(o.id, o.name) FROM com.example.Model.OptionDB o WHERE o.optionGroupId = :optionGroupId")
+    List<OptionDTO> findOptionDTOByOptionGroupId(@Param("optionGroupId") Long optionGroupId);
+
+    @Query("SELECT new com.example.Dto.OptionDTO(o.id, o.name) FROM com.example.Model.OptionDB o")
+    List<OptionDTO> findAllDTOS();
 }
+

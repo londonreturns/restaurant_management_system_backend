@@ -218,15 +218,19 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public List<CategoryDTO> getAllCategory() {
-        List<CategoryDB> categories = categoryRepository.findAll();
+
+        List<CategoryDTO> categories = categoryRepository.getAllCategories();
+
+        List<MenuDB> allMenus = menuRepository.findAll();
+
+        Map<Long, List<MenuDB>> categoryIdMenuMap = allMenus.stream()
+                .collect(Collectors.groupingBy(MenuDB::getCategoryId));
+
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
 
-        for (CategoryDB category : categories) {
-            CategoryDTO categoryDTO = new CategoryDTO();
-            categoryDTO.setId(category.getId());
-            categoryDTO.setName(category.getName());
+        for (CategoryDTO category : categories) {
 
-            List<MenuDB> menus = menuRepository.findByCategoryId(category.getId());
+            List<MenuDB> menus = categoryIdMenuMap.get(category.getId());
             List<MenuDTO> menuDTOList = new ArrayList<>();
 
             for (MenuDB menu : menus) {
@@ -259,8 +263,8 @@ public class FoodServiceImpl implements FoodService {
                 menuDTOList.add(menuDTO);
             }
 
-            categoryDTO.setMenu(menuDTOList);
-            categoryDTOList.add(categoryDTO);
+            category.setMenu(menuDTOList);
+            categoryDTOList.add(category);
         }
 
         return categoryDTOList;
