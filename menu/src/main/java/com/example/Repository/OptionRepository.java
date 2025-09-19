@@ -7,14 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface OptionRepository extends JpaRepository<OptionDB, Long> {
     List<OptionDB> findByOptionGroupId(Long optionGroupId);
 
-    @Query("SELECT new com.example.Dto.OptionDTO(o.id, o.name) FROM com.example.Model.OptionDB o WHERE o.optionGroupId = :optionGroupId")
-    List<OptionDTO> findOptionDTOByOptionGroupId(@Param("optionGroupId") Long optionGroupId);
-
-    @Query("SELECT new com.example.Dto.OptionDTO(o.id, o.name) FROM com.example.Model.OptionDB o")
-    List<OptionDTO> findAllDTOS();
+    @Query("SELECT new com.example.Dto.OptionDTO(o.id, o.name, o.optionGroupId) " +
+            "FROM com.example.Model.OptionDB o " +
+            "WHERE o.optionGroupId IN :optionIds")
+    List<OptionDTO> findDTOSByIds(@Param("optionIds") Set<Long> optionIds);
 }
 

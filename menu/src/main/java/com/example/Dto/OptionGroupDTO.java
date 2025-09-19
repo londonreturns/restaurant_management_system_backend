@@ -11,6 +11,11 @@ import java.util.List;
 @Data
 public class OptionGroupDTO {
 
+    public OptionGroupDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     private Long id;
 
     private String name;

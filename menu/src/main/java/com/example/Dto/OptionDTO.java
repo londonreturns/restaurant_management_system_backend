@@ -13,6 +13,12 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class OptionDTO {
 
+    public OptionDTO(Long id, String name, Long optionGroupId) {
+        this.id = id;
+        this.name = name;
+        this.optionGroupId = optionGroupId;
+    }
+
     public OptionDTO(Long id, String name) {
         this.name = name;
         this.id = id;

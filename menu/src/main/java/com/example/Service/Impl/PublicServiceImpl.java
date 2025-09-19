@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,35 +123,42 @@ public class PublicServiceImpl implements PublicService {
         SizeGroupOptionGroupDB sizeGroupOptionGroupDB = sizeGroupOptionGroupRepository.findById(sizeGroupOptionGroupId)
                 .orElseThrow(() -> new ResourceNotFoundException("OptionGroup with id " + sizeGroupOptionGroupId + " not found"));
 
-        List<OptionDTO> optionDTOS = sizeOptionRepository.findBySizeGroupOptionGroupId(sizeGroupOptionGroupDB.getSizeGroupId());
+        Long sizeGroupId = sizeGroupOptionGroupDB.getSizeGroupId();
+
+        List<OptionDTO> optionDTOS = sizeOptionRepository.findBySizeGroupOptionGroupId(sizeGroupId);
 
         if (optionDTOS != null) {
-            Long sizeGroupId = sizeGroupOptionGroupDB.getSizeGroupId();
-
             List<SizeOptionDTO> allSizeOptions = sizeOptionRepository.findAllSizeOptions();
+            List<SizeDTO> sizeDTOS = sizeRepository.getBySizeGroupId(sizeGroupId);
 
             for (OptionDTO optionDTO : optionDTOS) {
-                List<SizeDTO> sizeDTOS = sizeRepository.getBySizeGroupId(sizeGroupId);
 
                 if (sizeDTOS != null && !sizeDTOS.isEmpty()) {
+                    List<SizeDTO> finalSizeDTOs = new ArrayList<>();
+
                     for (SizeDTO sizeDTO : sizeDTOS) {
                         Long sizeId = sizeDTO.getId();
                         Long optionId = optionDTO.getId();
 
+                        SizeDTO enrichedSize = new SizeDTO(sizeId, sizeDTO.getName());
+
                         for (SizeOptionDTO sizeOptionDTO : allSizeOptions) {
-                            if (sizeOptionDTO.getSizeId().equals(sizeId) && sizeOptionDTO.getOptionId().equals(optionId)) {
-                                sizeDTO.setPrice(sizeOptionDTO.getPrice());
+                            if (sizeOptionDTO.getSizeId().equals(sizeId) &&
+                                    sizeOptionDTO.getOptionId().equals(optionId)) {
+                                enrichedSize.setPrice(sizeOptionDTO.getPrice());
+                                break;
                             }
                         }
-                    }
-                }
 
-                optionDTO.setSizes(sizeDTOS);
+                        finalSizeDTOs.add(enrichedSize);
+                    }
+
+                    optionDTO.setSizes(finalSizeDTOs);
+                }
             }
         }
 
         SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO = new SizeGroupOptionGroupDTO();
-
         sizeGroupOptionGroupDTO.setOptions(optionDTOS);
         return sizeGroupOptionGroupDTO;
     }
@@ -160,58 +168,51 @@ public class PublicServiceImpl implements PublicService {
     public SizeGroupOptionGroupDTO handleExtraPrices(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
 
         SizeGroupOptionGroupDB sizeGroupOptionGroupDB = sizeGroupOptionGroupRepository.findById(sizeGroupOptionGroupDTO.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("SizeGroupOptionGroup with id " + sizeGroupOptionGroupDTO.getSizeGroupId() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("SizeGroupOptionGroup with id " + sizeGroupOptionGroupDTO.getId() + " not found"));
 
         List<Long> optionIds = sizeGroupOptionGroupDTO.getOptions().stream()
                 .map(OptionDTO::getId)
                 .collect(Collectors.toList());
 
-        List<OptionDB> optionDBS = optionRepository.findAll();
+        List<OptionDB> optionDBs = optionRepository.findAllById(optionIds);
+        Map<Long, OptionDB> optionDBMap = optionDBs.stream()
+                .collect(Collectors.toMap(OptionDB::getId, Function.identity()));
 
-        List<OptionDB> filteredOptionDTOs = optionDBS.stream()
-                .filter(optionDB -> optionIds.contains(optionDB.getId()))
-                .collect(Collectors.toList());
+        List<SizeDB> sizeDBs = sizeRepository.findBySizeGroupId(sizeGroupOptionGroupDB.getSizeGroupId());
+        Map<Long, SizeDB> sizeDBMap = sizeDBs.stream()
+                .collect(Collectors.toMap(SizeDB::getId, Function.identity()));
 
-        Map<Long, OptionDB> optionDBMap = filteredOptionDTOs.stream()
-                .collect(Collectors.toMap(OptionDB::getId, optionDB -> optionDB));
+        List<SizeOptionDB> sizeOptionDBsToSave = new ArrayList<>();
 
-        List<SizeDB> sizeDBS = sizeRepository.findBySizeGroupId(sizeGroupOptionGroupDB.getSizeGroupId());
+        for (OptionDTO optionDTO : sizeGroupOptionGroupDTO.getOptions()) {
+            OptionDB optionDB = optionDBMap.get(optionDTO.getId());
+            if (optionDB == null) {
+                throw new ResourceNotFoundException("OptionDB with id " + optionDTO.getId() + " not found");
+            }
 
-        Map<Long, SizeDB> sizeDBMap = sizeDBS.stream()
-                .collect(Collectors.toMap(SizeDB::getId, sizeDB -> sizeDB));
-
-        for (Map.Entry<Long, OptionDB> optionDBEntry : optionDBMap.entrySet()) {
-            Long optionId = optionDBEntry.getKey();
-            OptionDB optionDB = optionDBEntry.getValue();
-
-            OptionDTO optionDTO = sizeGroupOptionGroupDTO.getOptions().stream()
-                    .filter(opt -> opt.getId().equals(optionId))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("OptionDTO with id " + optionId + " not found"));
-
-            for (Map.Entry<Long, SizeDB> sizeDBEntry : sizeDBMap.entrySet()) {
-                Long sizeId = sizeDBEntry.getKey();
-                SizeDB sizeDB = sizeDBEntry.getValue();
-
-                SizeDTO sizeDTO = optionDTO.getSizes().stream()
-                        .filter(size -> size.getId().equals(sizeId))
-                        .findFirst()
-                        .orElseThrow(() -> new ResourceNotFoundException("SizeDTO with id " + sizeId + " not found"));
+            for (SizeDTO sizeDTO : optionDTO.getSizes()) {
+                SizeDB sizeDB = sizeDBMap.get(sizeDTO.getId());
+                if (sizeDB == null) {
+                    throw new ResourceNotFoundException("SizeDB with id " + sizeDTO.getId() + " not found");
+                }
 
                 SizeOptionDB sizeOptionDB = new SizeOptionDB();
-                sizeOptionDB.setId(optionId);
-                sizeOptionDB.setOptionId(optionId);
-                sizeOptionDB.setSizeId(sizeId);
+
+                sizeOptionDB.setOptionId(optionDB.getId());
+                sizeOptionDB.setSizeId(sizeDB.getId());
                 sizeOptionDB.setOption(optionDB);
                 sizeOptionDB.setSize(sizeDB);
                 sizeOptionDB.setSizeGroupOptionGroupId(sizeGroupOptionGroupDB.getSizeGroupId());
                 sizeOptionDB.setSizeGroupOptionGroup(sizeGroupOptionGroupDB);
                 sizeOptionDB.setPrice(sizeDTO.getPrice());
 
-                sizeOptionRepository.save(sizeOptionDB);
+                sizeOptionDBsToSave.add(sizeOptionDB);
             }
         }
 
+        sizeOptionRepository.saveAll(sizeOptionDBsToSave);
+
         return sizeGroupOptionGroupDTO;
     }
+
 }

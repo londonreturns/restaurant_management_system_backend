@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MenuSizeDTO {
 
+    public MenuSizeDTO(Long id, float price, Long menuId) {
+        this.id = id;
+        this.price = price;
+        this.menuId = menuId;
+    }
+
     private Long id;
 
     private float price;
