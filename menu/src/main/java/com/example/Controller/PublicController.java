@@ -19,6 +19,11 @@ public class PublicController {
         return new ResponseEntity<>(publicService.menuInfo(menuId), HttpStatus.OK);
     }
 
+    @GetMapping("menuInfoBetter/{menuId}")
+    public ResponseEntity<MenuDTO> menuInfoBetter(@PathVariable Long menuId) {
+        return new ResponseEntity<>(publicService.menuInfoBetter(menuId), HttpStatus.OK);
+    }
+
     @GetMapping("/extraPrices/{sizeGroupOptionGroupId}")
     public ResponseEntity<SizeGroupOptionGroupDTO> extraPrices(@PathVariable Long sizeGroupOptionGroupId) {
         return new ResponseEntity<>(publicService.extraPrices(sizeGroupOptionGroupId), HttpStatus.OK);

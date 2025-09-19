@@ -118,6 +118,41 @@ public class PublicServiceImpl implements PublicService {
     }
 
     @Override
+    public MenuDTO menuInfoBetter(Long menuId) {
+
+        MenuDTO menuDTO = menuRepository.getMenuDTOById(menuId);
+        List<SizeDTO> sizeDTOS = sizeRepository.getBySizeGroupId(menuDTO.getSizeGroupId());
+        List<OptionDTO> menuOptions = menuSizeRepository.findDTOByMenuId(menuId);
+
+        List<OptionGroupDTO> optionGroups = sizeGroupOptionGroupRepository.findAllOptionGroupBySizeGroupId(menuDTO.getSizeGroupId());
+
+        Map<Long, OptionGroupDTO> optionGroupDTOMap = optionGroups.stream()
+                .collect(Collectors.toMap(OptionGroupDTO::getId, optionGroup -> optionGroup));
+
+        List<OptionDTO> optionDTOs = optionRepository.findDTOSByIds(optionGroupDTOMap.keySet());
+
+        for (OptionDTO optionDTO : optionDTOs) {
+            Long optionGroupId = optionDTO.getOptionGroupId();
+            OptionGroupDTO optionGroupDTO = optionGroupDTOMap.get(optionGroupId);
+
+            if (optionGroupDTO != null) {
+                if (optionGroupDTO.getOptions() == null) {
+                    optionGroupDTO.setOptions(new ArrayList<>());
+                }
+                optionGroupDTO.getOptions().add(optionDTO);
+            }
+        }
+
+        List<OptionGroupDTO> optionGroupDTOS = new ArrayList<>(optionGroupDTOMap.values());
+
+        menuDTO.setSizes(sizeDTOS);
+        menuDTO.setMenuOptions(menuOptions);
+        menuDTO.setOptionGroups(optionGroupDTOS);
+
+        return menuDTO;
+    }
+
+    @Override
     public SizeGroupOptionGroupDTO extraPrices(Long sizeGroupOptionGroupId) {
 
         SizeGroupOptionGroupDB sizeGroupOptionGroupDB = sizeGroupOptionGroupRepository.findById(sizeGroupOptionGroupId)
