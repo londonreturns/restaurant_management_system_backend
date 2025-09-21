@@ -16,8 +16,6 @@ public class MenuOptionGroupDB {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false, referencedColumnName = "id")
     private MenuDB menu;

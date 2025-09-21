@@ -31,6 +31,8 @@ public class MenuDTO {
 
     private Long sizeGroupId;
 
+    private Long optionGroupId;
+
     List<MenuSizeDTO> menuSizes;
 
     List<OptionDTO> options;

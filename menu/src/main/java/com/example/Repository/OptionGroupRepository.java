@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface OptionGroupRepository extends JpaRepository<OptionGroupDB, Long> {
 
-    @Query("SELECT DISTINCT new com.example.Dto.OptionGroupDTO(og.id, og.name) FROM option_group og")
-    List<OptionGroupDTO> findAllDTOs();
+    @Query("SELECT new com.example.Dto.OptionGroupDTO(og.id, og.name) FROM com.example.Model.OptionGroupDB og")
+    List<OptionGroupDTO> findAllDTOsWithOptions();
 }

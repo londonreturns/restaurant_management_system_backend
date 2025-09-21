@@ -11,4 +11,8 @@ public interface PublicService {
     SizeGroupOptionGroupDTO extraPrices(Long sizeGroupOptionGroupId);
 
     SizeGroupOptionGroupDTO handleExtraPrices(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO);
+
+    MenuDTO getMenuOptionGroup(Long menuId);
+
+    MenuDTO handleMenuOptionGroup(MenuDTO menuDTO);
 }

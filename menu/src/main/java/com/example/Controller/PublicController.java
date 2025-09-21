@@ -33,4 +33,14 @@ public class PublicController {
     public ResponseEntity<SizeGroupOptionGroupDTO> extraPrices(@RequestBody SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
         return new ResponseEntity<>(publicService.handleExtraPrices(sizeGroupOptionGroupDTO), HttpStatus.OK);
     }
+
+    @GetMapping("/getMenuOptionGroup/{menuId}")
+    public ResponseEntity<MenuDTO> getMenuOptionGroup(@PathVariable Long menuId) {
+        return new ResponseEntity<>(publicService.getMenuOptionGroup(menuId), HttpStatus.OK);
+    }
+
+    @PostMapping("/handleMenuOptionGroup")
+    public ResponseEntity<MenuDTO> handleMenuOptionGroup(@RequestBody MenuDTO menuDTO) {
+        return new ResponseEntity<>(publicService.handleMenuOptionGroup(menuDTO), HttpStatus.OK);
+    }
 }

@@ -8,10 +8,7 @@ import com.example.Service.PublicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -41,6 +38,9 @@ public class PublicServiceImpl implements PublicService {
 
     @Autowired
     private SizeOptionRepository sizeOptionRepository;
+
+    @Autowired
+    private MenuOptionGroupRepository menuOptionGroupRepository;
 
     @Override
     public MenuDTO menuInfo(Long menuId) {
@@ -208,8 +208,6 @@ public class PublicServiceImpl implements PublicService {
     }
 
 
-
-
     @Override
     public SizeGroupOptionGroupDTO extraPrices(Long sizeGroupOptionGroupId) {
 
@@ -310,5 +308,80 @@ public class PublicServiceImpl implements PublicService {
 
         return sizeGroupOptionGroupDTO;
     }
+
+    @Override
+    public MenuDTO getMenuOptionGroup(Long menuId) {
+        MenuDTO menuDTO = menuRepository.getMenuDTOById(menuId);
+
+        List<OptionGroupDTO> selectedOptionGroupDTOS = menuOptionGroupRepository.findOptionGroupDTOByMenuId(menuId);
+
+        List<OptionGroupDTO> allOptionGroupDTOS = optionGroupRepository.findAllDTOsWithOptions();
+
+        Set<Long> selectedOptionGroupIds = selectedOptionGroupDTOS.stream()
+                .map(OptionGroupDTO::getId)
+                .collect(Collectors.toSet());
+
+        List<OptionGroupDTO> optionGroupDTOS = new ArrayList<>();
+
+        for (OptionGroupDTO optionGroupDTO : allOptionGroupDTOS) {
+            OptionGroupDTO optionGroup = new OptionGroupDTO();
+            optionGroup.setId(optionGroupDTO.getId());
+            optionGroup.setName(optionGroupDTO.getName());
+            optionGroup.setOptions(optionGroupDTO.getOptions());
+            optionGroup.setSelected(selectedOptionGroupIds.contains(optionGroupDTO.getId()));
+            optionGroupDTOS.add(optionGroup);
+        }
+
+        menuDTO.setOptionGroups(optionGroupDTOS);
+        return menuDTO;
+    }
+
+
+    @Override
+    public MenuDTO handleMenuOptionGroup(MenuDTO menuDTO) {
+        List<OptionGroupDTO> optionGroupDTOS = menuDTO.getOptionGroups();
+        List<Long> inputOptionGroupIds = optionGroupDTOS.stream()
+                .map(OptionGroupDTO::getId)
+                .collect(Collectors.toList());
+
+        MenuDB menuDB = menuRepository.findById(menuDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Menu with id " + menuDTO.getId() + " not found"));
+
+        List<OptionGroupDB> optionGroupDBS = optionGroupRepository.findAllById(inputOptionGroupIds);
+
+        Map<Long, OptionGroupDB> optionGroupDBMap = optionGroupDBS.stream()
+                .collect(Collectors.toMap(OptionGroupDB::getId, Function.identity()));
+
+        List<MenuOptionGroupDB> existingMenuOptionGroups = menuOptionGroupRepository.findByMenuId(menuDB.getId());
+        Map<Long, MenuOptionGroupDB> existingMap = new HashMap<>();
+        for (MenuOptionGroupDB relation : existingMenuOptionGroups) {
+            existingMap.put(relation.getOptionGroupId(), relation);
+        }
+
+        for (OptionGroupDTO dto : optionGroupDTOS) {
+            Long optionGroupId = dto.getId();
+            boolean selected = dto.isSelected();
+            boolean existsInDb = existingMap.containsKey(optionGroupId);
+
+            if (selected && !existsInDb) {
+                OptionGroupDB optionGroupDB = optionGroupDBMap.get(optionGroupId);
+
+                MenuOptionGroupDB newRelation = new MenuOptionGroupDB();
+                newRelation.setMenuId(menuDB.getId());
+                newRelation.setOptionGroupId(optionGroupId);
+                newRelation.setMenu(menuDB);
+                newRelation.setOptionGroup(optionGroupDB);
+
+                menuOptionGroupRepository.save(newRelation);
+
+            } else if (!selected && existsInDb) {
+                MenuOptionGroupDB relationToRemove = existingMap.get(optionGroupId);
+                menuOptionGroupRepository.delete(relationToRemove);
+            }
+        }
+
+        return menuDTO;
+    }
+
 
 }
