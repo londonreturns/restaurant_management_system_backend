@@ -16,9 +16,5 @@ public interface OptionRepository extends JpaRepository<OptionDB, Long> {
             "FROM com.example.Model.OptionDB o " +
             "WHERE o.optionGroupId IN :optionIds")
     List<OptionDTO> findDTOSByIds(@Param("optionIds") Set<Long> optionIds);
-
-    @Query("SELECT new com.example.Dto.OptionDTO(o.id, o.name)" +
-            " FROM com.example.Model.OptionDB o")
-    List<OptionDTO> findAllDTOS();
 }
 

@@ -125,7 +125,7 @@ public class PublicServiceImpl implements PublicService {
         List<SizeDTO> sizeDTOS = sizeRepository.getBySizeGroupId(menuDTO.getSizeGroupId());
         List<OptionDTO> menuOptions = menuSizeRepository.findDTOByMenuId(menuId);
 
-        List<OptionGroupDTO> optionGroups = sizeGroupOptionGroupRepository.findAllOptionGroupBySizeGroupId(menuDTO.getSizeGroupId());
+        List<OptionGroupDTO> optionGroups = optionGroupRepository.findAllDTOsWithOptions();
         List<SizeOptionDTO> sizeOfOptionsDTOS = sizeOptionRepository.findAllSizeOptions();
 
         Map<Long, OptionGroupDTO> optionGroupDTOMap = new HashMap<>();
@@ -137,6 +137,12 @@ public class PublicServiceImpl implements PublicService {
 
         Map<Long, List<SizeOptionDTO>> sizeOptionsByOptionId = sizeOfOptionsDTOS.stream()
                 .collect(Collectors.groupingBy(SizeOptionDTO::getOptionId));
+
+        List<OptionGroupDTO> selectedOptionGroupDTOS = menuOptionGroupRepository.findOptionGroupDTOByMenuId(menuId);
+
+        Set<Long> selectedOptionGroupIds = selectedOptionGroupDTOS.stream()
+                .map(OptionGroupDTO::getId)
+                .collect(Collectors.toSet());
 
         for (OptionDTO optionDTO : optionDTOs) {
             Long optionGroupId = optionDTO.getOptionGroupId();
@@ -171,6 +177,7 @@ public class PublicServiceImpl implements PublicService {
 
                 optionDTO.setSizes(sizesWithPrice);
                 optionGroupDTO.getOptions().add(optionDTO);
+                optionGroupDTO.setSelected(selectedOptionGroupIds.contains(optionGroupDTO.getId()));
             }
         }
 
