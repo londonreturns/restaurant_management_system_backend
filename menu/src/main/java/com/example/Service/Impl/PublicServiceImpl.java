@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -77,7 +78,7 @@ public class PublicServiceImpl implements PublicService {
 
             chosenOptionDTOs.add(optionDTO);
         }
-        
+
         List<SizeGroupOptionGroupDB> sizeGroupOptionGroupDBS = sizeGroupOptionGroupRepository.findAllBySizeGroupId(menuDB.getSizeGroupId());
 
         List<OptionGroupDTO> availableOptionDTOS = new ArrayList<>();
@@ -125,11 +126,17 @@ public class PublicServiceImpl implements PublicService {
         List<OptionDTO> menuOptions = menuSizeRepository.findDTOByMenuId(menuId);
 
         List<OptionGroupDTO> optionGroups = sizeGroupOptionGroupRepository.findAllOptionGroupBySizeGroupId(menuDTO.getSizeGroupId());
+        List<SizeOptionDTO> sizeOfOptionsDTOS = sizeOptionRepository.findAllSizeOptions();
 
-        Map<Long, OptionGroupDTO> optionGroupDTOMap = optionGroups.stream()
-                .collect(Collectors.toMap(OptionGroupDTO::getId, optionGroup -> optionGroup));
+        Map<Long, OptionGroupDTO> optionGroupDTOMap = new HashMap<>();
+        for (OptionGroupDTO group : optionGroups) {
+            optionGroupDTOMap.put(group.getId(), group);
+        }
 
         List<OptionDTO> optionDTOs = optionRepository.findDTOSByIds(optionGroupDTOMap.keySet());
+
+        Map<Long, List<SizeOptionDTO>> sizeOptionsByOptionId = sizeOfOptionsDTOS.stream()
+                .collect(Collectors.groupingBy(SizeOptionDTO::getOptionId));
 
         for (OptionDTO optionDTO : optionDTOs) {
             Long optionGroupId = optionDTO.getOptionGroupId();
@@ -139,18 +146,69 @@ public class PublicServiceImpl implements PublicService {
                 if (optionGroupDTO.getOptions() == null) {
                     optionGroupDTO.setOptions(new ArrayList<>());
                 }
+
+                List<SizeOptionDTO> sizesForOption;
+                if (sizeOptionsByOptionId.containsKey(optionDTO.getId())) {
+                    sizesForOption = sizeOptionsByOptionId.get(optionDTO.getId());
+                } else {
+                    sizesForOption = new ArrayList<>();
+                }
+
+                Map<Long, Float> priceBySizeId = sizesForOption.stream()
+                        .collect(Collectors.toMap(
+                                SizeOptionDTO::getSizeId,
+                                SizeOptionDTO::getPrice
+                        ));
+
+                List<SizeDTO> sizesWithPrice = new ArrayList<>();
+                for (SizeDTO sizeDTO : sizeDTOS) {
+                    SizeDTO size = new SizeDTO();
+                    size.setId(sizeDTO.getId());
+                    size.setName(sizeDTO.getName());
+                    size.setPrice(priceBySizeId.getOrDefault(sizeDTO.getId(), 0f));
+                    sizesWithPrice.add(size);
+                }
+
+                optionDTO.setSizes(sizesWithPrice);
                 optionGroupDTO.getOptions().add(optionDTO);
             }
         }
 
-        List<OptionGroupDTO> optionGroupDTOS = new ArrayList<>(optionGroupDTOMap.values());
+        for (OptionDTO menuOptionDTO : menuOptions) {
+            List<SizeOptionDTO> sizesForOption;
+            if (sizeOptionsByOptionId.containsKey(menuOptionDTO.getId())) {
+                sizesForOption = sizeOptionsByOptionId.get(menuOptionDTO.getId());
+            } else {
+                sizesForOption = new ArrayList<>();
+            }
+
+            Map<Long, Float> priceBySizeId = sizesForOption.stream()
+                    .collect(Collectors.toMap(
+                            SizeOptionDTO::getSizeId,
+                            SizeOptionDTO::getPrice
+                    ));
+
+            List<SizeDTO> sizesWithPrice = new ArrayList<>();
+            for (SizeDTO sizeDTO : sizeDTOS) {
+                SizeDTO size = new SizeDTO();
+                size.setId(sizeDTO.getId());
+                size.setName(sizeDTO.getName());
+                size.setPrice(priceBySizeId.getOrDefault(sizeDTO.getId(), 0f));
+                sizesWithPrice.add(size);
+            }
+
+            menuOptionDTO.setSizes(sizesWithPrice);
+        }
 
         menuDTO.setSizes(sizeDTOS);
         menuDTO.setMenuOptions(menuOptions);
-        menuDTO.setOptionGroups(optionGroupDTOS);
+        menuDTO.setOptionGroups(optionGroups);
 
         return menuDTO;
     }
+
+
+
 
     @Override
     public SizeGroupOptionGroupDTO extraPrices(Long sizeGroupOptionGroupId) {
@@ -175,7 +233,10 @@ public class PublicServiceImpl implements PublicService {
                         Long sizeId = sizeDTO.getId();
                         Long optionId = optionDTO.getId();
 
-                        SizeDTO enrichedSize = new SizeDTO(sizeId, sizeDTO.getName());
+                        SizeDTO enrichedSize = new SizeDTO();
+                        enrichedSize.setId(sizeId);
+                        enrichedSize.setName(optionDTO.getName());
+
 
                         for (SizeOptionDTO sizeOptionDTO : allSizeOptions) {
                             if (sizeOptionDTO.getSizeId().equals(sizeId) &&

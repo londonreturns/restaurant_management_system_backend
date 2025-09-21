@@ -13,6 +13,8 @@ import java.util.List;
 public interface SizeRepository extends JpaRepository<SizeDB, Long> {
     List<SizeDB> findBySizeGroupId(Long sizeGroupId);
 
-    @Query("SELECT new com.example.Dto.SizeDTO(s.id, s.name) FROM com.example.Model.SizeDB s WHERE s.sizeGroupId = :sizeGroupId")
+    @Query("SELECT new com.example.Dto.SizeDTO(s.id, s.name, ms.price) FROM com.example.Model.SizeDB s " +
+            " JOIN menu_size ms ON ms.sizeId = s.id" +
+            " WHERE s.sizeGroupId = :sizeGroupId")
     List<SizeDTO> getBySizeGroupId(@Param("sizeGroupId") Long sizeGroupId);
 }
