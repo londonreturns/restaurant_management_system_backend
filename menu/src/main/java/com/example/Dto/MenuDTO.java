@@ -13,6 +13,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MenuDTO {
 
+    public MenuDTO(Long id, String name, float basePrice, Long categoryId) {
+        this.id = id;
+        this.name = name;
+        this.categoryId = categoryId;
+        this.basePrice = basePrice;
+    }
+
     public MenuDTO(Long id, String name, float basePrice, Long categoryId, Long sizeGroupId) {
         this.id = id;
         this.name = name;

@@ -19,4 +19,8 @@ public interface MenuRepository extends JpaRepository<MenuDB, Long> {
             " FROM com.example.Model.MenuDB m" +
             " WHERE m.id = :menuId")
     MenuDTO getMenuDTOById(@Param("menuId") Long menuId);
+
+    @Query("SELECT DISTINCT new com.example.Dto.MenuDTO(m.id, m.name, m.basePrice, m.categoryId)" +
+            " FROM com.example.Model.MenuDB m")
+    List<MenuDTO> getAllMenus();
 }

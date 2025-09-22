@@ -1,6 +1,7 @@
 package com.example.Service;
 
 import com.example.Dto.MenuDTO;
+import com.example.Dto.ResponseDTO;
 import com.example.Dto.SizeGroupOptionGroupDTO;
 
 public interface PublicService {
@@ -15,4 +16,6 @@ public interface PublicService {
     MenuDTO getMenuOptionGroup(Long menuId);
 
     MenuDTO handleMenuOptionGroup(MenuDTO menuDTO);
+
+    ResponseDTO categoriesWithMenu();
 }

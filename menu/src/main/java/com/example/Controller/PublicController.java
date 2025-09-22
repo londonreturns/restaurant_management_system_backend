@@ -1,6 +1,7 @@
 package com.example.Controller;
 
 import com.example.Dto.MenuDTO;
+import com.example.Dto.ResponseDTO;
 import com.example.Dto.SizeGroupOptionGroupDTO;
 import com.example.Service.PublicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,10 @@ public class PublicController {
     @PostMapping("/handleMenuOptionGroup")
     public ResponseEntity<MenuDTO> handleMenuOptionGroup(@RequestBody MenuDTO menuDTO) {
         return new ResponseEntity<>(publicService.handleMenuOptionGroup(menuDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/categoriesWithMenu")
+    public ResponseEntity<ResponseDTO> categoriesWithMenu() {
+        return new ResponseEntity<>(publicService.categoriesWithMenu(), HttpStatus.OK);
     }
 }
