@@ -128,10 +128,9 @@ public class PublicServiceImpl implements PublicService {
         List<OptionGroupDTO> optionGroups = optionGroupRepository.findAllDTOsWithOptions();
         List<SizeOptionDTO> sizeOfOptionsDTOS = sizeOptionRepository.findAllSizeOptions();
 
-        Map<Long, OptionGroupDTO> optionGroupDTOMap = new HashMap<>();
-        for (OptionGroupDTO group : optionGroups) {
-            optionGroupDTOMap.put(group.getId(), group);
-        }
+        Map<Long, OptionGroupDTO> optionGroupDTOMap = optionGroups.stream()
+                .collect(Collectors.toMap(OptionGroupDTO::getId, group -> group));
+
 
         List<OptionDTO> optionDTOs = optionRepository.findDTOSByIds(optionGroupDTOMap.keySet());
 
@@ -360,10 +359,9 @@ public class PublicServiceImpl implements PublicService {
                 .collect(Collectors.toMap(OptionGroupDB::getId, Function.identity()));
 
         List<MenuOptionGroupDB> existingMenuOptionGroups = menuOptionGroupRepository.findByMenuId(menuDB.getId());
-        Map<Long, MenuOptionGroupDB> existingMap = new HashMap<>();
-        for (MenuOptionGroupDB relation : existingMenuOptionGroups) {
-            existingMap.put(relation.getOptionGroupId(), relation);
-        }
+        Map<Long, MenuOptionGroupDB> existingMap  = existingMenuOptionGroups.stream()
+                .collect(Collectors.toMap(MenuOptionGroupDB::getOptionGroupId, relation -> relation));
+
 
         for (OptionGroupDTO dto : optionGroupDTOS) {
             Long optionGroupId = dto.getId();
@@ -374,8 +372,6 @@ public class PublicServiceImpl implements PublicService {
                 OptionGroupDB optionGroupDB = optionGroupDBMap.get(optionGroupId);
 
                 MenuOptionGroupDB newRelation = new MenuOptionGroupDB();
-                newRelation.setMenuId(menuDB.getId());
-                newRelation.setOptionGroupId(optionGroupId);
                 newRelation.setMenu(menuDB);
                 newRelation.setOptionGroup(optionGroupDB);
 

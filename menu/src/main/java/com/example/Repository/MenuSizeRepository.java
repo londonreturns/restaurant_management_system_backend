@@ -5,9 +5,11 @@ import com.example.Model.MenuSizeDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MenuSizeRepository extends JpaRepository<MenuSizeDB, Long> {
     List<MenuSizeDB> findByMenuId(Long menuId);
 
