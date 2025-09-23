@@ -391,7 +391,21 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public ResponseDTO categoriesWithMenu() {
-        return new ResponseDTO(categoryRepository.getAllCategoriesWithMenus());
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        List<CategoryDTO> categoryDTOS = categoryRepository.getAllCategories();
+        List<MenuDTO> menuDTOS = menuRepository.getAllMenus();
+
+        Map<Long, List<MenuDTO>> categoryIdMenuMap = menuDTOS.stream()
+                .collect(Collectors.groupingBy(MenuDTO::getCategoryId));
+
+        for (CategoryDTO categoryDTO : categoryDTOS) {
+            List<MenuDTO> menuDTOList = categoryIdMenuMap.get(categoryDTO.getId());
+            categoryDTO.setMenu(menuDTOList);
+        }
+
+        responseDTO.setCategories(categoryDTOS);
+        return responseDTO;
     }
 
 }
