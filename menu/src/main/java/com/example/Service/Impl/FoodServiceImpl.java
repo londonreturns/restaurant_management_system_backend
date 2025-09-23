@@ -90,6 +90,18 @@ public class FoodServiceImpl implements FoodService {
         return sizeGroupDTOS;
     }
 
+    @Override
+    public SizeGroupDTO getSizeGroupById(Long sizeGroupId) {
+        SizeGroupDTO sizeGroupDTO = sizeGroupRepository.findSizeGroupDTOById(sizeGroupId);
+
+        if (sizeGroupDTO != null) {
+            List<SizeDTO> sizeDTOS = sizeRepository.findDTOBySizeGroupId(sizeGroupId);
+
+            sizeGroupDTO.setSizes(sizeDTOS);
+        }
+
+        return sizeGroupDTO;
+    }
 
 
     @Override

@@ -20,4 +20,11 @@ public interface SizeRepository extends JpaRepository<SizeDB, Long> {
 
     @Query("SELECT new com.example.Dto.SizeDTO(s.id, s.name, s.sizeGroupId) FROM com.example.Model.SizeDB s ")
     List<SizeDTO> findAllSizeDTO();
+
+    @Query("SELECT new com.example.Dto.SizeDTO(s.id, s.name, s.sizeGroupId)" +
+            " FROM size s" +
+            " JOIN size_group sg" +
+            " ON s.sizeGroupId = sg.id" +
+            " WHERE sg.id = :sizeGroupId")
+    List<SizeDTO> findDTOBySizeGroupId(@Param("sizeGroupId") Long sizeGroupId);
 }

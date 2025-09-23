@@ -25,6 +25,11 @@ public class FoodController {
         return new ResponseEntity<>(foodService.getAllSizeGroups(), HttpStatus.OK);
     }
 
+    @GetMapping("/getSizeGroupAndSizesById/{sizeGroupId}")
+    public ResponseEntity<SizeGroupDTO> getSizeGroupById(@PathVariable Long sizeGroupId) {
+        return new ResponseEntity<>(foodService.getSizeGroupById(sizeGroupId), HttpStatus.OK);
+    }
+
     @PutMapping("/updateSizeGroupAndSizes")
     public ResponseEntity<SizeGroupDTO> updateSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
         return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);

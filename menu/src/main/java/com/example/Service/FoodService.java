@@ -9,6 +9,8 @@ public interface FoodService {
 
     List<SizeGroupDTO> getAllSizeGroups();
 
+    SizeGroupDTO getSizeGroupById(Long sizeGroupId);
+
     SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO);
 
     MenuDTO createMenuAndSize(MenuDTO menuDTO);
