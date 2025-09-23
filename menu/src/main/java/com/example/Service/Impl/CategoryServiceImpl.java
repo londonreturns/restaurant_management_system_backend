@@ -58,9 +58,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private CategoryDB updateCategoryDetails(CategoryDB oldCategory, CategoryDB newCategory) {
-        newCategory.setId(oldCategory.getId());
-        newCategory.setName(oldCategory.getName());
-        return newCategory;
+        oldCategory.setName(newCategory.getName());
+        return oldCategory;
     }
 
     private CategoryDB convertToEntity(CategoryDTO categoryDTO) {
