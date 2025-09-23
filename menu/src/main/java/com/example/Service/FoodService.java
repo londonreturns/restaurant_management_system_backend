@@ -13,6 +13,8 @@ public interface FoodService {
 
     SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO);
 
+    String deleteSizeGroupAndSizeById(Long sizeGroupId);
+
     MenuDTO createMenuAndSize(MenuDTO menuDTO);
 
     MenuDTO updateMenuAndSize(MenuDTO menuDTO);

@@ -141,6 +141,22 @@ public class FoodServiceImpl implements FoodService {
         return updatedSizeGroupDTO;
     }
 
+    @Override
+    @Transactional
+    public String deleteSizeGroupAndSizeById(Long sizeGroupId) {
+        sizeGroupRepository.findById(sizeGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("Size group with id " + sizeGroupId + " does not exist"));
+
+        List<SizeDTO> sizeDTOS = sizeRepository.findDTOBySizeGroupId(sizeGroupId);
+
+        for (SizeDTO sizeDTO : sizeDTOS) {
+            sizeRepository.deleteById(sizeDTO.getId());
+        }
+
+        sizeGroupRepository.deleteById(sizeGroupId);
+        return "SizeGroup with id " + sizeGroupId + " has been deleted";
+    }
+
 
     @Override
     public MenuDTO createMenuAndSize(MenuDTO menuDTO) {

@@ -35,6 +35,11 @@ public class FoodController {
         return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
     }
 
+    @DeleteMapping("/deleteSizeGroupAndSizes/{sizeGroupId}")
+    public ResponseEntity<String> deleteSizeGroupAndSize(@PathVariable Long sizeGroupId) {
+        return new ResponseEntity<>(foodService.deleteSizeGroupAndSizeById(sizeGroupId), HttpStatus.OK);
+    }
+
     @PostMapping("/createMenuAndMenuSizesBySizeGroupId")
     public ResponseEntity<MenuDTO> createMenuAndMenuSizesBySizeGroupId(@RequestBody MenuDTO menuDTO) {
         return new ResponseEntity<>(foodService.createMenuAndSize(menuDTO), HttpStatus.OK);
