@@ -7,6 +7,8 @@ import java.util.List;
 public interface FoodService {
     SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO);
 
+    List<SizeGroupDTO> getAllSizeGroups();
+
     SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO);
 
     MenuDTO createMenuAndSize(MenuDTO menuDTO);

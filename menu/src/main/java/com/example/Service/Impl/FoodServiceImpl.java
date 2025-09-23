@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,6 +73,23 @@ public class FoodServiceImpl implements FoodService {
 
         return sizeGroupDTO;
     }
+
+    @Override
+    public List<SizeGroupDTO> getAllSizeGroups() {
+        List<SizeGroupDTO> sizeGroupDTOS = sizeGroupRepository.findAllSizeGroupDTO();
+        List<SizeDTO> sizeDTOS = sizeRepository.findAllSizeDTO();
+
+        Map<Long, List<SizeDTO>> sizeGroupIdToSizesMap = sizeDTOS.stream()
+                .collect(Collectors.groupingBy(SizeDTO::getSizeGroupId));
+
+        for (SizeGroupDTO sizeGroupDTO : sizeGroupDTOS) {
+            List<SizeDTO> sizes = sizeGroupIdToSizesMap.get(sizeGroupDTO.getId());
+            sizeGroupDTO.setSizes(sizes);
+        }
+
+        return sizeGroupDTOS;
+    }
+
 
 
     @Override

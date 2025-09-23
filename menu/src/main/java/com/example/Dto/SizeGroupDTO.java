@@ -12,6 +12,11 @@ import java.util.List;
 @Data
 public class SizeGroupDTO {
 
+    public SizeGroupDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     private Long id;
 
     private String name;

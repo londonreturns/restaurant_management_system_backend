@@ -20,6 +20,11 @@ public class FoodController {
         return new ResponseEntity<>(foodService.createSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllSizeGroupsAndSizes")
+    public ResponseEntity<List<SizeGroupDTO>> getAllSizeGroup() {
+        return new ResponseEntity<>(foodService.getAllSizeGroups(), HttpStatus.OK);
+    }
+
     @PutMapping("/updateSizeGroupAndSizes")
     public ResponseEntity<SizeGroupDTO> updateSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
         return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
