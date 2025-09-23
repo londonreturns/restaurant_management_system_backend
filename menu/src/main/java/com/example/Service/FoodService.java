@@ -27,6 +27,10 @@ public interface FoodService {
 
     OptionGroupDTO createOptionGroupAndOption(OptionGroupDTO optionGroupDTO);
 
+    List<OptionGroupDTO> getAllOptionGroupAndOption();
+
+
+
     OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO);
 
     SizeGroupOptionGroupDTO linkSizeGroupAndOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO);

@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -381,6 +384,23 @@ public class FoodServiceImpl implements FoodService {
 
         return optionGroupDTO;
     }
+
+    @Override
+    public List<OptionGroupDTO> getAllOptionGroupAndOption() {
+        List<OptionDTO> optionDTOS = optionRepository.findAllOptionDTOs();
+        List<OptionGroupDTO> optionGroupDBList = optionGroupRepository.findAllDTOsWithOptions();
+
+        Map<Long, List<OptionDTO>> optionsByGroupId = optionDTOS.stream()
+                .collect(Collectors.groupingBy(OptionDTO::getOptionGroupId));
+
+        for (OptionGroupDTO group : optionGroupDBList) {
+            List<OptionDTO> optionsForGroup = optionsByGroupId.getOrDefault(group.getId(), Collections.emptyList());
+            group.setOptions(optionsForGroup);
+        }
+
+        return optionGroupDBList;
+    }
+
 
     @Override
     public OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO) {

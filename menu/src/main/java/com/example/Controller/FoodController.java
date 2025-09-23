@@ -60,6 +60,16 @@ public class FoodController {
         return new ResponseEntity<>(foodService.createOptionGroupAndOption(optionGroupDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllOptionGroupAndOption")
+    public ResponseEntity<List<OptionGroupDTO>> getAllOptionGroupAndOption() {
+        return new ResponseEntity<>(foodService.getAllOptionGroupAndOption(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getOptionGroupAndOptionById")
+    public ResponseEntity<OptionGroupDTO> getOptionGroupAndOptionById(@RequestParam Long optionGroupId) {
+        return new ResponseEntity<>(foodService.getOptionGroupAndOptionById(), HttpStatus.OK);
+    }
+
     @PutMapping("/updateMenuAndMenuSizesBySizeGroupId")
     public ResponseEntity<MenuDTO> updateMenuAndMenuSizesBySizeGroupId(@RequestBody MenuDTO menuDTO) {
         return new ResponseEntity<>(foodService.updateMenuAndSize(menuDTO), HttpStatus.OK);
