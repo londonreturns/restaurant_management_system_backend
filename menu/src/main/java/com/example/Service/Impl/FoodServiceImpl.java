@@ -401,6 +401,19 @@ public class FoodServiceImpl implements FoodService {
         return optionGroupDBList;
     }
 
+    @Override
+    public OptionGroupDTO getOptionGroupAndOptionById(Long optionGroupId) {
+        OptionGroupDTO optionGroupDB = optionGroupRepository.findDTOById(optionGroupId);
+
+        if (optionGroupDB != null) {
+            List<OptionDTO> optionDTOS = optionRepository.findDTOByOptionGroupId(optionGroupId);
+            optionGroupDB.setOptions(optionDTOS);
+        }
+
+        return optionGroupDB;
+    }
+
+
 
     @Override
     public OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO) {

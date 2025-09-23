@@ -65,9 +65,9 @@ public class FoodController {
         return new ResponseEntity<>(foodService.getAllOptionGroupAndOption(), HttpStatus.OK);
     }
 
-    @GetMapping("/getOptionGroupAndOptionById")
-    public ResponseEntity<OptionGroupDTO> getOptionGroupAndOptionById(@RequestParam Long optionGroupId) {
-        return new ResponseEntity<>(foodService.getOptionGroupAndOptionById(), HttpStatus.OK);
+    @GetMapping("/getOptionGroupAndOptionById/{optionGroupId}")
+    public ResponseEntity<OptionGroupDTO> getOptionGroupAndOptionById(@PathVariable Long optionGroupId) {
+        return new ResponseEntity<>(foodService.getOptionGroupAndOptionById(optionGroupId), HttpStatus.OK);
     }
 
     @PutMapping("/updateMenuAndMenuSizesBySizeGroupId")

@@ -29,7 +29,7 @@ public interface FoodService {
 
     List<OptionGroupDTO> getAllOptionGroupAndOption();
 
-
+    OptionGroupDTO getOptionGroupAndOptionById(Long optionGroupId);
 
     OptionGroupDTO updateOptionGroupAndOption(OptionGroupDTO optionGroupDTO);
 
