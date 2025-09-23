@@ -241,6 +241,19 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    public MenuDTO getMenuAndMenuSizesByMenuId(Long menuId) {
+        MenuDTO menuDTO = menuRepository.getMenuDTOById(menuId);
+
+        if (menuDTO != null) {
+            List<SizeDTO> sizesForMenu = sizeRepository.findBySizeMenuId(menuId);
+
+            menuDTO.setSizes(sizesForMenu);
+        }
+
+        return menuDTO;
+    }
+
+    @Override
     public MenuDTO updateMenuAndSize(MenuDTO menuDTO) {
         Long menuId = menuDTO.getId();
         MenuDB existingMenu = menuRepository.findById(menuId)

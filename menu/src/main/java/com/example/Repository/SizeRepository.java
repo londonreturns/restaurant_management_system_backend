@@ -27,4 +27,11 @@ public interface SizeRepository extends JpaRepository<SizeDB, Long> {
             " ON s.sizeGroupId = sg.id" +
             " WHERE sg.id = :sizeGroupId")
     List<SizeDTO> findDTOBySizeGroupId(@Param("sizeGroupId") Long sizeGroupId);
+
+    @Query("SELECT DISTINCT new com.example.Dto.SizeDTO(s.id, s.name, ms.price)" +
+            " FROM size s" +
+            " JOIN menu_size ms" +
+            " ON s.id = ms.sizeId" +
+            " WHERE ms.menuId = :menuId")
+    List<SizeDTO> findBySizeMenuId(@Param("menuId") Long menuId);
 }

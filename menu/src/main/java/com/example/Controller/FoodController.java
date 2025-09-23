@@ -50,6 +50,16 @@ public class FoodController {
         return new ResponseEntity<>(foodService.getAllMenuAndMenuSizes(), HttpStatus.OK);
     }
 
+    @GetMapping("getMenuAndMenuSizesByMenuId/{menuId}")
+    public ResponseEntity<MenuDTO> getMenuAndMenuSizesByMenuId(@PathVariable Long menuId) {
+        return new ResponseEntity<>(foodService.getMenuAndMenuSizesByMenuId(menuId), HttpStatus.OK);
+    }
+
+    @PostMapping("/createOptionGroupAndOption")
+    public ResponseEntity<OptionGroupDTO> createOptionSizeAndOption(@RequestBody OptionGroupDTO optionGroupDTO) {
+        return new ResponseEntity<>(foodService.createOptionGroupAndOption(optionGroupDTO), HttpStatus.OK);
+    }
+
     @PutMapping("/updateMenuAndMenuSizesBySizeGroupId")
     public ResponseEntity<MenuDTO> updateMenuAndMenuSizesBySizeGroupId(@RequestBody MenuDTO menuDTO) {
         return new ResponseEntity<>(foodService.updateMenuAndSize(menuDTO), HttpStatus.OK);
@@ -58,11 +68,6 @@ public class FoodController {
     @GetMapping("/getAllCategoriesAndMenus")
     public ResponseEntity<List<CategoryDTO>> getAllCategoriesAndMenus() {
         return new ResponseEntity<>(foodService.getAllCategory(), HttpStatus.OK);
-    }
-
-    @PostMapping("/createOptionGroupAndOption")
-    public ResponseEntity<OptionGroupDTO> createOptionSizeAndOption(@RequestBody OptionGroupDTO optionGroupDTO) {
-        return new ResponseEntity<>(foodService.createOptionGroupAndOption(optionGroupDTO), HttpStatus.OK);
     }
 
     @PutMapping("/updateOptionGroupAndOption")

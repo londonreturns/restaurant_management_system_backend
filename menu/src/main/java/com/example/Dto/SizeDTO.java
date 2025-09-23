@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SizeDTO {
 
+
+
     public SizeDTO(Long id, String name, float price) {
         this.id = id;
         this.name = name;
