@@ -1,5 +1,6 @@
 package com.example.Repository;
 
+import com.example.Dto.MenuSizeDTO;
 import com.example.Dto.OptionDTO;
 import com.example.Model.MenuSizeDB;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,8 @@ public interface MenuSizeRepository extends JpaRepository<MenuSizeDB, Long> {
             " ON mo.optionId = o.id" +
             " WHERE mo.menuId = :menuId")
     List<OptionDTO> findDTOByMenuId(@Param("menuId") Long menuId);
+
+    @Query("SELECT DISTINCT new com.example.Dto.MenuSizeDTO(ms.id, ms.price, ms.menuId, ms.sizeId)" +
+            " FROM com.example.Model.MenuSizeDB ms")
+    List<MenuSizeDTO> findAllMenuSizeDTOs();
 }

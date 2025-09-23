@@ -17,6 +17,8 @@ public interface FoodService {
 
     MenuDTO createMenuAndSize(MenuDTO menuDTO);
 
+    List<MenuDTO> getAllMenuAndMenuSizes();
+
     MenuDTO updateMenuAndSize(MenuDTO menuDTO);
 
     List<CategoryDTO> getAllCategory();

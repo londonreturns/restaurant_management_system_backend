@@ -45,6 +45,11 @@ public class FoodController {
         return new ResponseEntity<>(foodService.createMenuAndSize(menuDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllMenuAndMenuSizes")
+    public ResponseEntity<List<MenuDTO>> getMenuAndMenuSizes() {
+        return new ResponseEntity<>(foodService.getAllMenuAndMenuSizes(), HttpStatus.OK);
+    }
+
     @PutMapping("/updateMenuAndMenuSizesBySizeGroupId")
     public ResponseEntity<MenuDTO> updateMenuAndMenuSizesBySizeGroupId(@RequestBody MenuDTO menuDTO) {
         return new ResponseEntity<>(foodService.updateMenuAndSize(menuDTO), HttpStatus.OK);

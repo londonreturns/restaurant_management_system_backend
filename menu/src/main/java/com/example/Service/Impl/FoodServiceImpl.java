@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -208,6 +205,39 @@ public class FoodServiceImpl implements FoodService {
         menuDTO.setMenuSizes(menuSizeDTOs);
 
         return menuDTO;
+    }
+
+    @Override
+    public List<MenuDTO> getAllMenuAndMenuSizes() {
+        List<MenuDTO> menuDTOS = menuRepository.getAllMenus();
+        List<SizeDTO> sizeDTOS = sizeRepository.findAllSizeDTO();
+        List<MenuSizeDTO> menuSizeDTOs = menuSizeRepository.findAllMenuSizeDTOs();
+
+        Map<Long, SizeDTO> sizeMap = sizeDTOS.stream()
+                .collect(Collectors.toMap(SizeDTO::getId, size -> size));
+
+        for (MenuDTO menu : menuDTOS) {
+            List<SizeDTO> sizesForMenu = new ArrayList<>();
+
+            for (MenuSizeDTO menuSize : menuSizeDTOs) {
+                if (menuSize.getMenuId().equals(menu.getId())) {
+                    SizeDTO size = sizeMap.get(menuSize.getSizeId());
+                    if (size != null) {
+                        SizeDTO sizeCopy = new SizeDTO();
+                        sizeCopy.setId(size.getId());
+                        sizeCopy.setName(size.getName());
+                        sizeCopy.setSizeGroupId(size.getSizeGroupId());
+                        sizeCopy.setPrice(menuSize.getPrice());
+
+                        sizesForMenu.add(sizeCopy);
+                    }
+                }
+            }
+
+            menu.setSizes(sizesForMenu);
+        }
+
+        return menuDTOS;
     }
 
     @Override
