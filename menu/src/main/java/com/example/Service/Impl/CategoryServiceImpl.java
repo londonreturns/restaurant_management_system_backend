@@ -4,9 +4,11 @@ import com.example.Dto.CategoryDTO;
 import com.example.Model.CategoryDB;
 import com.example.Repository.CategoryRepository;
 import com.example.Service.CategoryService;
+import com.example.Utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +22,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) throws ValidationException {
+        Validator.isValidName(categoryDTO.getName(), 3, 15);
         return convertToDto(categoryRepository.save(convertToEntity(categoryDTO)));
     }
 

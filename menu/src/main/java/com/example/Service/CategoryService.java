@@ -2,11 +2,12 @@ package com.example.Service;
 
 import com.example.Dto.CategoryDTO;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
 
 public interface CategoryService {
 
-    CategoryDTO createCategory(CategoryDTO categoryDTO);
+    CategoryDTO createCategory(CategoryDTO categoryDTO) throws ValidationException;
 
     CategoryDTO findCategoryById(Long id);
 

@@ -1,15 +1,16 @@
 package com.example.Controller;
 
 import com.example.Dto.CategoryDTO;
-import com.example.Model.CategoryDB;
 import com.example.Service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
-
+@Slf4j
 @RestController
 public class CategoryController {
 
@@ -18,7 +19,12 @@ public class CategoryController {
 
     @PostMapping("/createCategory")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO category) {
-        return new ResponseEntity<>(categoryService.createCategory(category), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(categoryService.createCategory(category), HttpStatus.OK);
+        }catch (ValidationException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
     }
 
     @GetMapping("/getCategoryById/{id}")
