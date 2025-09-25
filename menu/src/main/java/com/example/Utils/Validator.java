@@ -3,7 +3,7 @@ package com.example.Utils;
 import javax.xml.bind.ValidationException;
 
 public class Validator {
-    public static void isValidName(String name, int minLength, int maxLength, int count) throws ValidationException {
+    public static void isValidName(String name, int minLength, int maxLength, int nameCount) throws ValidationException {
         if (name == null || name.trim().isEmpty()) {
             throw new ValidationException("Name is empty");
         }
@@ -17,7 +17,7 @@ public class Validator {
             throw new ValidationException("Name contains special characters");
         }
 
-        if (count > 0) {
+        if (nameCount > 0) {
             throw new ValidationException("Name is duplicated");
         }
     }

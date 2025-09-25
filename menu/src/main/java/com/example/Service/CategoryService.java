@@ -13,7 +13,7 @@ public interface CategoryService {
 
     List<CategoryDTO> findAllCategories();
 
-    CategoryDTO updateCategory(CategoryDTO categoryDTO);
+    CategoryDTO updateCategory(CategoryDTO categoryDTO) throws ValidationException;
 
     String deleteCategory(Long id);
 }

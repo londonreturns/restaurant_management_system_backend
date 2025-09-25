@@ -39,7 +39,13 @@ public class CategoryController {
 
     @PutMapping("/updateCategories")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category) {
-        return new ResponseEntity<>(categoryService.updateCategory(category), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(categoryService.updateCategory(category), HttpStatus.OK);
+        } catch (ValidationException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
+
     }
 
     @DeleteMapping("/deleteCategory/{id}")

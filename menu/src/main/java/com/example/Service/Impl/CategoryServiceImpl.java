@@ -42,11 +42,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) throws ValidationException {
         Long id = categoryDTO.getId();
         CategoryDB oldCategory = categoryRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Category with id " + id + " not found")
         );
+
+        List<CategoryDTO> categoryDTOFromDB = categoryRepository.findByName(categoryDTO.getName());
+        Validator.isValidName(categoryDTO.getName(),3, 15, categoryDTOFromDB.size());
 
         CategoryDB updateCategory = updateCategoryDetails(oldCategory, convertToEntity(categoryDTO));
         return convertToDto(categoryRepository.save(updateCategory));
