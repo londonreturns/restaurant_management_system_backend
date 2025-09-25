@@ -2,16 +2,17 @@ package com.example.Service;
 
 import com.example.Dto.*;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
 
 public interface FoodService {
-    SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO);
+    SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException;
 
     List<SizeGroupDTO> getAllSizeGroups();
 
     SizeGroupDTO getSizeGroupById(Long sizeGroupId);
 
-    SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO);
+    SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException;
 
     String deleteSizeGroupAndSizeById(Long sizeGroupId);
 

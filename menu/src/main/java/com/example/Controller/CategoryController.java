@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.ValidationException;
 import java.util.List;
+
 @Slf4j
 @RestController
 public class CategoryController {
@@ -45,7 +46,6 @@ public class CategoryController {
             log.error(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
         }
-
     }
 
     @DeleteMapping("/deleteCategory/{id}")

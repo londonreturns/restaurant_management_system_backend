@@ -2,13 +2,16 @@ package com.example.Controller;
 
 import com.example.Dto.*;
 import com.example.Service.FoodService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
 
+@Slf4j
 @RestController
 public class FoodController {
 
@@ -17,7 +20,12 @@ public class FoodController {
 
     @PostMapping("/createSizeGroupAndSizes")
     public ResponseEntity<SizeGroupDTO> createSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
-        return new ResponseEntity<>(foodService.createSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(foodService.createSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
+        } catch (ValidationException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
     }
 
     @GetMapping("/getAllSizeGroupsAndSizes")
@@ -32,7 +40,12 @@ public class FoodController {
 
     @PutMapping("/updateSizeGroupAndSizes")
     public ResponseEntity<SizeGroupDTO> updateSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
-        return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
+        } catch (ValidationException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+        }
     }
 
     @DeleteMapping("/deleteSizeGroupAndSizes/{sizeGroupId}")

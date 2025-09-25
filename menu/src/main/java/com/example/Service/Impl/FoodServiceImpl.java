@@ -5,10 +5,12 @@ import com.example.Exception.ResourceNotFoundException;
 import com.example.Model.*;
 import com.example.Repository.*;
 import com.example.Service.FoodService;
+import com.example.Utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +48,17 @@ public class FoodServiceImpl implements FoodService {
     private MenuOptionRepository menuOptionRepository;
 
     @Override
-    public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
+    @Transactional
+    public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException {
+
+        List<SizeGroupDTO> sizeGroupFromDB = sizeGroupRepository.findByName(sizeGroupDTO.getName());
+        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), 3, 15, sizeGroupFromDB.size());
+
+        List<SizeDTO> sizes = sizeGroupDTO.getSizes();
+        for (SizeDTO size : sizes) {
+            Validator.isValidName(size.getName(), 3, 15);
+        }
+
         SizeGroupDB sizeGroup = new SizeGroupDB();
         sizeGroup.setName(sizeGroupDTO.getName());
         SizeGroupDB sizeGroupDB = sizeGroupRepository.save(sizeGroup);
@@ -105,7 +117,17 @@ public class FoodServiceImpl implements FoodService {
 
 
     @Override
-    public SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) {
+    @Transactional
+    public SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException {
+
+        List<SizeGroupDTO> sizeGroupFromDB = sizeGroupRepository.findByName(sizeGroupDTO.getName());
+        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), 3, 15, sizeGroupFromDB.size());
+
+        List<SizeDTO> sizes = sizeGroupDTO.getSizes();
+        for (SizeDTO size : sizes) {
+            Validator.isValidName(size.getName(), 3, 15);
+        }
+
         Long sizeGroupId = sizeGroupDTO.getId();
 
         SizeGroupDB sizeGroupDB = sizeGroupRepository.findById(sizeGroupId)
