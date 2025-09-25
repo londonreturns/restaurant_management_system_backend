@@ -23,7 +23,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) throws ValidationException {
-        Validator.isValidName(categoryDTO.getName(), 3, 15);
+        List<CategoryDTO> categoryDTOFromDB = categoryRepository.findByName(categoryDTO.getName());
+        Validator.isValidName(categoryDTO.getName(), 3, 15, categoryDTOFromDB.size());
         return convertToDto(categoryRepository.save(convertToEntity(categoryDTO)));
     }
 

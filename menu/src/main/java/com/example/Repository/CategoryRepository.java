@@ -4,6 +4,7 @@ import com.example.Dto.CategoryDTO;
 import com.example.Model.CategoryDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,4 +14,8 @@ public interface CategoryRepository extends JpaRepository<CategoryDB, Long> {
 
     @Query("SELECT new com.example.Dto.CategoryDTO(c.id, c.name) FROM com.example.Model.CategoryDB c")
     List<CategoryDTO> getAllCategories();
+
+    @Query("SELECT new com.example.Dto.CategoryDTO(c.id, c.name) FROM com.example.Model.CategoryDB c" +
+            " WHERE c.name = :name")
+    List<CategoryDTO> findByName(@Param("name") String name);
 }
