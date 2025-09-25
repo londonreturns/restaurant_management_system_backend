@@ -1,5 +1,6 @@
 package com.example.Service.Impl;
 
+import com.example.Constants.Constants;
 import com.example.Dto.CategoryDTO;
 import com.example.Model.CategoryDB;
 import com.example.Repository.CategoryRepository;
@@ -24,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) throws ValidationException {
         List<CategoryDTO> categoryDTOFromDB = categoryRepository.findByName(categoryDTO.getName());
-        Validator.isValidNameAndUnique(categoryDTO.getName(), 3, 15, categoryDTOFromDB.size());
+        Validator.isValidNameAndUnique(categoryDTO.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH, categoryDTOFromDB.size());
         return convertToDto(categoryRepository.save(convertToEntity(categoryDTO)));
     }
 
@@ -49,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
         );
 
         List<CategoryDTO> categoryDTOFromDB = categoryRepository.findByName(categoryDTO.getName());
-        Validator.isValidNameAndUnique(categoryDTO.getName(),3, 15, categoryDTOFromDB.size());
+        Validator.isValidNameAndUnique(categoryDTO.getName(),Constants.MIN_LENGTH, Constants.MAX_LENGTH, categoryDTOFromDB.size());
 
         CategoryDB updateCategory = updateCategoryDetails(oldCategory, convertToEntity(categoryDTO));
         return convertToDto(categoryRepository.save(updateCategory));

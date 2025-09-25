@@ -1,5 +1,6 @@
 package com.example.Service.Impl;
 
+import com.example.Constants.Constants;
 import com.example.Dto.*;
 import com.example.Exception.ResourceNotFoundException;
 import com.example.Model.*;
@@ -52,11 +53,11 @@ public class FoodServiceImpl implements FoodService {
     public SizeGroupDTO createSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException {
 
         List<SizeGroupDTO> sizeGroupFromDB = sizeGroupRepository.findByName(sizeGroupDTO.getName());
-        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), 3, 15, sizeGroupFromDB.size());
+        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH, sizeGroupFromDB.size());
 
         List<SizeDTO> sizes = sizeGroupDTO.getSizes();
         for (SizeDTO size : sizes) {
-            Validator.isValidName(size.getName(), 3, 15);
+            Validator.isValidName(size.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH);
         }
 
         SizeGroupDB sizeGroup = new SizeGroupDB();
@@ -121,11 +122,11 @@ public class FoodServiceImpl implements FoodService {
     public SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException {
 
         List<SizeGroupDTO> sizeGroupFromDB = sizeGroupRepository.findByName(sizeGroupDTO.getName());
-        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), 3, 15, sizeGroupFromDB.size());
+        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH, sizeGroupFromDB.size());
 
         List<SizeDTO> sizes = sizeGroupDTO.getSizes();
         for (SizeDTO size : sizes) {
-            Validator.isValidName(size.getName(), 3, 15);
+            Validator.isValidName(size.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH);
         }
 
         Long sizeGroupId = sizeGroupDTO.getId();
