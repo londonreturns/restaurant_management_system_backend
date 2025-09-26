@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.bind.ValidationException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,16 +47,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO updateCategory(CategoryDTO categoryDTO) throws ValidationException {
         Long id = categoryDTO.getId();
+
         CategoryDB oldCategory = categoryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Category with id " + id + " not found")
         );
 
-        List<CategoryDTO> categoryDTOFromDB = categoryRepository.findByName(categoryDTO.getName());
-        Validator.isValidNameAndUnique(categoryDTO.getName(),Constants.MIN_LENGTH, Constants.MAX_LENGTH, categoryDTOFromDB.size());
+        Optional<CategoryDTO> existingCategoryWithSameName = categoryRepository.findByName(categoryDTO.getName())
+                .stream()
+                .filter(cat -> !cat.getId().equals(id))
+                .findFirst();
 
-        CategoryDB updateCategory = updateCategoryDetails(oldCategory, convertToEntity(categoryDTO));
-        return convertToDto(categoryRepository.save(updateCategory));
+        Validator.isValidNameAndUnique(categoryDTO.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH, existingCategoryWithSameName.isPresent());
+
+        CategoryDB updatedCategory = updateCategoryDetails(oldCategory, convertToEntity(categoryDTO));
+        return convertToDto(categoryRepository.save(updatedCategory));
     }
+
+
 
     @Override
     public String deleteCategory(Long id) {

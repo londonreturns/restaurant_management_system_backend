@@ -22,10 +22,20 @@ public class Validator {
     }
 
     public static void isValidNameAndUnique(String name, int minLength, int maxLength, int nameCount) throws ValidationException {
-        Validator.isValidName(name, minLength, maxLength);
 
         if (nameCount > Constants.ZERO) {
             throw new ValidationException("Name is not unique");
         }
+
+        Validator.isValidName(name, minLength, maxLength);
+    }
+
+    public static void isValidNameAndUnique(String name, int minLength, int maxLength, boolean isDuplicate) throws ValidationException {
+
+        if (isDuplicate) {
+            throw new ValidationException("Name is not unique");
+        }
+
+        Validator.isValidName(name, minLength, maxLength);
     }
 }

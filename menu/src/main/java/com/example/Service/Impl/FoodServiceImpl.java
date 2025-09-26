@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,8 +118,12 @@ public class FoodServiceImpl implements FoodService {
     @Transactional
     public SizeGroupDTO updateSizeGroupAndSize(SizeGroupDTO sizeGroupDTO) throws ValidationException {
 
-        List<SizeGroupDTO> sizeGroupFromDB = sizeGroupRepository.findByName(sizeGroupDTO.getName());
-        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH, sizeGroupFromDB.size());
+        Optional<SizeGroupDTO> existingSizeGroupWithSameNames = sizeGroupRepository.findByName(sizeGroupDTO.getName())
+                .stream()
+                .filter(sizeGroup -> !sizeGroup.getId().equals(sizeGroupDTO.getId()))
+                .findFirst();
+
+        Validator.isValidNameAndUnique(sizeGroupDTO.getName(), Constants.MIN_LENGTH, Constants.MAX_LENGTH, existingSizeGroupWithSameNames.isPresent());
 
         List<SizeDTO> sizes = sizeGroupDTO.getSizes();
         for (SizeDTO size : sizes) {
