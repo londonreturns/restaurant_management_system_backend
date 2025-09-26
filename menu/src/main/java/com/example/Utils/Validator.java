@@ -1,5 +1,7 @@
 package com.example.Utils;
 
+import com.example.Constants.Constants;
+
 import javax.xml.bind.ValidationException;
 
 public class Validator {
@@ -10,7 +12,7 @@ public class Validator {
         }
 
         if (name.length() < minLength || name.length() > maxLength) {
-            throw new ValidationException("Name is not between " + minLength + " and " + maxLength);
+            throw new ValidationException("Name length is not between " + minLength + " and " + maxLength);
         }
 
         String regex = "^[a-zA-Z\\s]+$";
@@ -22,8 +24,8 @@ public class Validator {
     public static void isValidNameAndUnique(String name, int minLength, int maxLength, int nameCount) throws ValidationException {
         Validator.isValidName(name, minLength, maxLength);
 
-        if (nameCount > 0) {
-            throw new ValidationException("Name is duplicated");
+        if (nameCount > Constants.ZERO) {
+            throw new ValidationException("Name is not unique");
         }
     }
 }

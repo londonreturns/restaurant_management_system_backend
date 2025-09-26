@@ -19,12 +19,15 @@ public class FoodController {
     FoodService foodService;
 
     @PostMapping("/createSizeGroupAndSizes")
-    public ResponseEntity<SizeGroupDTO> createSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
+    public ResponseEntity<?> createSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
         try {
             return new ResponseEntity<>(foodService.createSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
         } catch (ValidationException e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -39,12 +42,15 @@ public class FoodController {
     }
 
     @PutMapping("/updateSizeGroupAndSizes")
-    public ResponseEntity<SizeGroupDTO> updateSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
+    public ResponseEntity<?> updateSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
         try {
             return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
         } catch (ValidationException e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

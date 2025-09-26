@@ -19,12 +19,15 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/createCategory")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO category) {
+    public ResponseEntity<?> createCategory(@RequestBody CategoryDTO category) {
         try {
             return new ResponseEntity<>(categoryService.createCategory(category), HttpStatus.OK);
-        }catch (ValidationException e) {
+        } catch (ValidationException e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -39,12 +42,15 @@ public class CategoryController {
     }
 
     @PutMapping("/updateCategories")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category) {
+    public ResponseEntity<?> updateCategory(@RequestBody CategoryDTO category) {
         try {
             return new ResponseEntity<>(categoryService.updateCategory(category), HttpStatus.OK);
         } catch (ValidationException e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.I_AM_A_TEAPOT);
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
