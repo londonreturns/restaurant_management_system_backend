@@ -1,6 +1,7 @@
 package com.example.Controller;
 
 import com.example.Dto.*;
+import com.example.Exception.ResourceNotFoundException;
 import com.example.Service.FoodService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class FoodController {
     public ResponseEntity<?> createSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
         try {
             return new ResponseEntity<>(foodService.createSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
-        } catch (ValidationException e) {
+        } catch (ValidationException | ResourceNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
         } catch (Exception e) {
@@ -45,7 +46,7 @@ public class FoodController {
     public ResponseEntity<?> updateSizeGroupAndSize(@RequestBody SizeGroupDTO sizeGroupDTO) {
         try {
             return new ResponseEntity<>(foodService.updateSizeGroupAndSize(sizeGroupDTO), HttpStatus.OK);
-        } catch (ValidationException e) {
+        } catch (ValidationException | ResourceNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
         } catch (Exception e) {

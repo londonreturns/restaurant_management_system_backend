@@ -2,6 +2,7 @@ package com.example.Service.Impl;
 
 import com.example.Constants.Constants;
 import com.example.Dto.CategoryDTO;
+import com.example.Exception.ResourceNotFoundException;
 import com.example.Model.CategoryDB;
 import com.example.Repository.CategoryRepository;
 import com.example.Service.CategoryService;
@@ -32,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO findCategoryById(Long id) {
         return convertToDto(categoryRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Category with id " + id + " not found")));
+                () -> new ResourceNotFoundException("Category with id " + id + " not found")));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO updateCategory(CategoryDTO categoryDTO) throws ValidationException {
         Long id = categoryDTO.getId();
         CategoryDB oldCategory = categoryRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Category with id " + id + " not found")
+                () -> new ResourceNotFoundException("Category with id " + id + " not found")
         );
 
         List<CategoryDTO> categoryDTOFromDB = categoryRepository.findByName(categoryDTO.getName());
@@ -59,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String deleteCategory(Long id) {
         categoryRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Category with id " + id + " not found"));
+                () -> new ResourceNotFoundException("Category with id " + id + " not found"));
 
         categoryRepository.deleteById(id);
         return "Category with id " + id + " deleted";

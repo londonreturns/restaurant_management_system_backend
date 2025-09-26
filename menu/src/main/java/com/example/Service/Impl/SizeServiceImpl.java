@@ -1,8 +1,8 @@
 package com.example.Service.Impl;
 
 import com.example.Dto.SizeDTO;
+import com.example.Exception.ResourceNotFoundException;
 import com.example.Model.SizeDB;
-import com.example.Model.SizeGroupDB;
 import com.example.Repository.SizeGroupRepository;
 import com.example.Repository.SizeRepository;
 import com.example.Service.SizeService;
@@ -24,7 +24,7 @@ public class SizeServiceImpl implements SizeService {
     @Override
     public SizeDTO createSize(SizeDTO dto) {
         sizeGroupRepository.findById(dto.getSizeGroupId())
-                .orElseThrow(() -> new RuntimeException("SizeGroup not found with id: " + dto.getSizeGroupId()));
+                .orElseThrow(() -> new ResourceNotFoundException("SizeGroup not found with id: " + dto.getSizeGroupId()));
 
         SizeDB sizeDB = convertToEntity(dto);
 
@@ -35,7 +35,7 @@ public class SizeServiceImpl implements SizeService {
     @Override
     public SizeDTO findSizeById(Long id) {
         return convertToDto(sizeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Size with id " + id + " Not Found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Size with id " + id + " Not Found")));
 
     }
 
@@ -52,7 +52,7 @@ public class SizeServiceImpl implements SizeService {
         Long id = dto.getId();
 
         SizeDB oldSize = sizeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Size with id " + id + " Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Size with id " + id + " Not Found"));
 
         SizeDB updatedSize = updateSizeDetails(oldSize, convertToEntity(dto));
         return convertToDto(sizeRepository.save(updatedSize));
@@ -61,7 +61,7 @@ public class SizeServiceImpl implements SizeService {
     @Override
     public String deleteSize(Long id) {
         sizeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Size with id " + id + " Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Size with id " + id + " Not Found"));
 
         sizeRepository.deleteById(id);
         return "Size with id " + id + " Deleted";

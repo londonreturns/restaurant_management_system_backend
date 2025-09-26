@@ -1,6 +1,7 @@
 package com.example.Controller;
 
 import com.example.Dto.CategoryDTO;
+import com.example.Exception.ResourceNotFoundException;
 import com.example.Service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,11 @@ public class CategoryController {
     public ResponseEntity<?> createCategory(@RequestBody CategoryDTO category) {
         try {
             return new ResponseEntity<>(categoryService.createCategory(category), HttpStatus.OK);
-        } catch (ValidationException e) {
+        } catch (ValidationException | ResourceNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -45,7 +47,7 @@ public class CategoryController {
     public ResponseEntity<?> updateCategory(@RequestBody CategoryDTO category) {
         try {
             return new ResponseEntity<>(categoryService.updateCategory(category), HttpStatus.OK);
-        } catch (ValidationException e) {
+        } catch (ValidationException | ResourceNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.getMessage());
         } catch (Exception e) {
