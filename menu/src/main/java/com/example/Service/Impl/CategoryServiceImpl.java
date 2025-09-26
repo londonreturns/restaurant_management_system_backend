@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
-    CategoryRepository CategoryRepository;
-    @Autowired
     private CategoryRepository categoryRepository;
 
 
